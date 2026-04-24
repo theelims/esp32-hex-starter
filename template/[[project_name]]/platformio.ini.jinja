@@ -26,7 +26,7 @@ build_src_filter =
 lib_deps =
     google/googletest@^1.14.0
 test_build_src = true
-test_ignore = test_smoke
+test_ignore = target/test_smoke
 
 ; ------------------------------------------------------------------ TARGET
 [env:esp32s3]
@@ -60,10 +60,10 @@ build_flags =
 build_src_filter =
     +<*>
     -<../test/>
-test_ignore = test_core_example
+test_ignore = native/test_core_example
 
 ; ----------------------------------------------------- ON-TARGET UNITY TESTS
 [env:test_esp32s3]
 extends = env:esp32s3
 test_framework = unity
-test_ignore = test_core_example
+test_ignore = native/test_core_example
