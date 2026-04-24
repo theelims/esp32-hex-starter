@@ -1,0 +1,37 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# ESP-IDF
+sdkconfig
+sdkconfig.old
+build/
+
+# Python / uv
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+# NOTE: uv.lock is COMMITTED (like Cargo.lock). Do not add it here.
+
+# GSD working area (managed by GSD itself)
+.planning/
+
+# VS Code workspace-local (per-user)
+.vscode/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Captured waveforms from HIL tests (they're large)
+tools/hil/captures/
+
+# Generated files that ARE committed (do not ignore):
+#   - components/board/include/board/Pins.hpp  (regenerated, but part of the build)
+#   - hardware/datasheets/<chip>/register_map.md, datasheet.md
+#   - components/drivers/<chip>/include/<chip>_regs.hpp
+#   - .claude/skills/<chip>-driver/SKILL.md
+# Rationale: generated once per chip/schematic revision; diffs are meaningful.

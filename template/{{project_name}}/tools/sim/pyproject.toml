@@ -1,0 +1,23 @@
+[project]
+name = "simhost"
+version = "0.1.0"
+description = "Python device simulation for native firmware tests"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["simhost"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

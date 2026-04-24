@@ -1,0 +1,103 @@
+_subdirectory: template
+_envops:
+  keep_trailing_newline: true
+  block_start_string: "[%"
+  block_end_string: "%]"
+  variable_start_string: "[["
+  variable_end_string: "]]"
+  comment_start_string: "[#"
+  comment_end_string: "#]"
+_answers_file: .copier-answers.yml
+_templates_suffix: .jinja
+_exclude:
+  - "[% if not enable_hil %]tools/hil/**[% endif %]"
+  - "[% if not enable_hil %]tools/hil[% endif %]"
+  - "[% if not enable_mcp %].mcp.json[% endif %]"
+
+_tasks:
+  - "uv sync || true"
+  - "uv run pre-commit install || true"
+  - "uv run pre-commit install --hook-type pre-push || true"
+
+_message_after_copy: |
+  Project scaffolded into ./{{ project_name }}
+
+  Next:
+    cd {{ project_name }}
+    uv sync
+    uv run pre-commit install
+    uv run pre-commit install --hook-type pre-push
+    pio run -e esp32s3
+
+  Read CLAUDE.md for the agentic workflow and docs/ for the rationale.
+
+project_name:
+  type: str
+  help: "Folder + git repo name (e.g. thermostat-rev-a). Lowercase, hyphens or underscores."
+  validator: >-
+    [% if not (project_name | regex_search('^[a-z][a-z0-9_-]{1,48}$')) %]
+    Must be lowercase, start with a letter, max 49 chars, [a-z0-9_-] only.
+    [% endif %]
+
+project_description:
+  type: str
+  help: "One-sentence description of what this board does (shown in README)."
+  default: "ESP32-S3 firmware project (hexagonal-lite)."
+
+author_name:
+  type: str
+  help: "Author name (for LICENSE and pyproject.toml)."
+  default: "Firmware Author"
+
+author_email:
+  type: str
+  help: "Author email."
+  default: "firmware@example.invalid"
+
+board_variant:
+  type: str
+  help: "Target board. Controls sdkconfig.defaults and platformio.ini defaults."
+  choices:
+    - esp32-s3-devkitc-n16r8
+    - esp32-s3-devkitc-1
+    - esp32-c6-devkitc-1
+  default: esp32-s3-devkitc-n16r8
+
+psram_mode:
+  type: str
+  help: "PSRAM mode — octal on N16R8, quad on most other S3 boards, none on C6."
+  choices:
+    - none
+    - quad
+    - octal
+  default: octal
+  when: "[[ board_variant != 'esp32-c6-devkitc-1' ]]"
+
+flash_size_mb:
+  type: int
+  help: "Flash size in MB. N16R8 is 16MB."
+  choices: [4, 8, 16, 32]
+  default: 16
+
+enable_hil:
+  type: bool
+  help: "Include the HIL bench (scope + PPK2) tooling under tools/hil/?"
+  default: true
+
+enable_mcp:
+  type: bool
+  help: "Configure MCP servers (.mcp.json) for Claude Code?"
+  default: true
+
+use_gsd:
+  type: bool
+  help: "Reference GSD (Get Shit Done) conventions in CLAUDE.md?"
+  default: true
+
+cpp_standard:
+  type: str
+  help: "C++ standard. gnu++17 is the ESP-IDF default sweet spot."
+  choices:
+    - "gnu++17"
+    - "gnu++20"
+  default: "gnu++17"

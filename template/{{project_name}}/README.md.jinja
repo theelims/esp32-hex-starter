@@ -1,0 +1,42 @@
+# [[ project_name ]]
+
+[[ project_description ]]
+
+ESP32-S3 C++ firmware with a hexagonal (ports & adapters) architecture, optimised for agentic coding with Claude Code[% if use_gsd %] + GSD[% endif %].
+
+## Quick start
+
+```bash
+uv sync                       # one-time: install Python tooling
+pio test -e native            # fast host-side tests (GoogleTest)
+pio run  -e esp32s3           # build target firmware
+pio run  -e esp32s3 -t upload # flash via built-in USB-JTAG
+pio device monitor -e esp32s3 # serial console
+pio test -e test_esp32s3      # on-chip Unity tests (slow)
+[% if enable_hil %]
+uv run pytest -m hil          # HIL bench tests (scope + PPK2)
+[% endif %]
+```
+
+## Where things live
+
+- `components/core/` — pure logic. No hardware includes. Compiles on your laptop.
+- `components/adapters_esp32/` — real ESP-IDF implementations.
+- `components/adapters_fake/` — fakes for native tests.
+- `components/drivers/` — device drivers (talk to ports, not hardware).
+- `main/main.cpp` — composition root (wires adapters to core).
+- `tools/sim/` — optional Python device simulation.
+[% if enable_hil %]
+- `tools/hil/` — hardware-in-the-loop bench (Siglent SDS1104X-E + Nordic PPK2).
+[% endif %]
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md).
+
+## Agentic workflow
+
+[% if use_gsd %]
+Use GSD slash commands for features: `/gsd-new-project`, `/gsd-plan`, `/gsd-execute`.
+[% endif %]
+Project memory lives in [CLAUDE.md](CLAUDE.md).

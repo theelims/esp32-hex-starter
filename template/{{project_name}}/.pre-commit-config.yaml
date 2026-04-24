@@ -1,0 +1,70 @@
+# Runs on every commit (fast gates) and on push (slow gates).
+# Strictness target: commit stays under ~2 s so agents don't learn to --no-verify.
+repos:
+  - repo: local
+    hooks:
+      - id: core-purity
+        name: "core/ must not include ESP-IDF or Arduino headers"
+        entry: .claude/hooks/enforce-core-purity.sh
+        language: system
+        files: ^components/core/.*\.(hpp|cpp|h|c)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: clang-format
+        name: "clang-format check"
+        entry: .claude/hooks/clang-format-check.sh
+        language: system
+        types_or: [c++, c]
+        pass_filenames: true
+        stages: [pre-commit]
+
+      - id: stack-size-convention
+        name: "xTaskCreate* must have a named *_STACK_BYTES constant nearby"
+        entry: .claude/hooks/stack-size-convention.sh
+        language: system
+        files: \.(cpp|c)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: isr-hygiene
+        name: "IRAM_ATTR ISR handlers must not call ESP_LOGx / malloc / new"
+        entry: .claude/hooks/isr-hygiene.sh
+        language: system
+        files: \.(cpp|c|hpp|h)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: no-magic-gpio
+        name: "No raw GPIO numbers — use board::Pins constants"
+        entry: .claude/hooks/no-magic-gpio.sh
+        language: system
+        files: \.(cpp|c|hpp|h)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: gen-pins-fresh
+        name: "components/board/Pins.hpp must be regenerated if hardware/board.yaml changed"
+        entry: .claude/hooks/gen-pins-fresh.sh
+        language: system
+        files: ^(hardware/board\.yaml|components/board/include/board/Pins\.hpp)$
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: mypy-tools
+        name: "mypy --strict over Python tooling"
+        entry: uv run mypy
+        language: system
+        types_or: [python]
+        files: ^tools/
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Native tests are slow (10–60 s). Gate them at push time, not commit.
+      # Install with: uv run pre-commit install --hook-type pre-push
+      - id: native-tests
+        name: "pio test -e native must pass"
+        entry: .claude/hooks/run-native-tests.sh
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

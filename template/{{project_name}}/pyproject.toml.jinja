@@ -1,0 +1,35 @@
+[project]
+name = "[[ project_name ]]-tooling"
+version = "0.1.0"
+description = "Python tooling for [[ project_name ]] (sim[% if enable_hil %] + HIL bench[% endif %])"
+authors = [{name = "[[ author_name ]]", email = "[[ author_email ]]"}]
+requires-python = ">=3.10"
+# Codegen scripts live at the repo root and need pyyaml at import time.
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "pre-commit>=3.5",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+gen-pins         = "tools.codegen.gen_pins:main"
+import-schematic = "tools.codegen.import_eagle:main"
+
+[tool.uv.workspace]
+members = ["tools/sim"[% if enable_hil %], "tools/hil"[% endif %]]
+
+[tool.uv.sources]
+simhost = { workspace = true }
+[% if enable_hil %]
+hil     = { workspace = true }
+[% endif %]
+
+[tool.mypy]
+strict = true
+python_version = "3.10"
+files = ["tools/codegen", "tools/sim/simhost"[% if enable_hil %], "tools/hil/hil"[% endif %]]

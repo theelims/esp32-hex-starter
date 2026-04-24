@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "esp-idf-mcp": {
+      "command": "esp-idf-mcp",
+      "env": {
+        "ESP_IDF_PATH": "/home/${USER}/.platformio/packages/framework-espidf"
+      }
+    },
+    "serial-mcp": {
+      "command": "serial-mcp-server"
+    }
+  }
+}

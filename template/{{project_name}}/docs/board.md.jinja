@@ -1,0 +1,19 @@
+# Board overview — [[ project_name ]]
+
+## What this board is
+_One-paragraph description of what the product is and what the hardware is doing._
+
+## Power tree
+_Regulator chain, expected current budget per rail, sleep-mode behaviour._
+
+## Signal flow
+_How data moves — sensor → MCU → radio, for example. Mention any surprising routing._
+
+## Gotchas and constraints
+_Things future-me (or the agent) should know. Example:_
+- GPIO 0 must stay deasserted at boot; don't mux it to anything that could pull it low.
+- The charger INT line is active-low and open-drain — don't forget the external pull-up.
+- SPI2 runs at 10 MHz; the IMU can't go higher over the flex cable used on rev-A.
+
+## Test points and debug access
+_What's broken out, what's not, how to probe during HIL testing._

@@ -1,0 +1,51 @@
+# Project-wide sdkconfig overrides. PlatformIO picks these up at build time.
+
+# C++ exceptions off, RTTI off (standard embedded policy — override if needed).
+# Implication: std::variant/std::get throwing is undefined; Result<T,E> callers
+# MUST check is_ok()/is_err() before value()/error(). See CLAUDE.md.
+CONFIG_COMPILER_CXX_EXCEPTIONS=n
+CONFIG_COMPILER_CXX_RTTI=n
+
+# Flash size
+[% if flash_size_mb == 4 %]
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+[% elif flash_size_mb == 8 %]
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+[% elif flash_size_mb == 16 %]
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+[% elif flash_size_mb == 32 %]
+CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
+[% endif %]
+
+[% if psram_mode == 'octal' %]
+# PSRAM: octal, 80MHz
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+[% elif psram_mode == 'quad' %]
+# PSRAM: quad, 80MHz
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_QUAD=y
+CONFIG_SPIRAM_SPEED_80M=y
+[% else %]
+# No PSRAM on this variant.
+[% endif %]
+
+# USB-JTAG/Serial as console (so logs appear over the single USB-C cable)
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+# Log level — info by default, app code can override per module
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# FreeRTOS tick 1000 Hz
+CONFIG_FREERTOS_HZ=1000
+
+# Stack check, watchpoints — helps agent diagnose crashes
+CONFIG_COMPILER_STACK_CHECK_MODE_STRONG=y
+CONFIG_ESP_SYSTEM_PANIC_PRINT_REBOOT=y
+
+# Coredump to flash. Enables post-mortem backtrace extraction with
+# espcoredump.py; the `gdb-diagnose` sub-agent relies on this.
+CONFIG_ESP_COREDUMP_ENABLE=y
+CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH=y
+CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF=y

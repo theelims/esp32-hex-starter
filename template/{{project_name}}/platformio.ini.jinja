@@ -1,0 +1,69 @@
+; PlatformIO configuration for [[ project_name ]]
+; Three environments:
+;   native   — host-compiled GoogleTest unit tests (fast inner loop)
+;   esp32s3  — on-target build for the board (production firmware)
+;   test_esp32s3 — on-target Unity tests (slow, requires board)
+
+[platformio]
+default_envs = esp32s3
+
+; ------------------------------------------------------------------ NATIVE
+[env:native]
+platform = native
+test_framework = googletest
+; Override default src_dir so build_src_filter paths below are unambiguous.
+; (PIO's default src_dir is ./src which we deleted at scaffold time.)
+src_dir = components
+build_flags =
+    -std=[[ cpp_standard ]]
+    -Wall -Wextra -Wpedantic
+    -DUNIT_TEST
+    -I components/core/include
+    -I components/adapters_fake/include
+build_src_filter =
+    +<core/src/>
+    +<adapters_fake/src/>
+lib_deps =
+    google/googletest@^1.14.0
+test_build_src = true
+test_ignore = test_smoke
+
+; ------------------------------------------------------------------ TARGET
+[env:esp32s3]
+platform = espressif32
+[% if board_variant == 'esp32-c6-devkitc-1' %]
+board = esp32-c6-devkitc-1
+[% else %]
+board = esp32-s3-devkitc-1
+[% endif %]
+framework = espidf
+; Cosmetic under USB-Serial/JTAG — the host side ignores baud.
+; Kept only so PIO's monitor UI has a value to display.
+monitor_speed = 115200
+; USB-JTAG/Serial (built-in on S3) — no external probe needed.
+; debug_tool=esp-builtin means `pio debug` starts OpenOCD automatically;
+; see .vscode/launch.json and docs/debugging.md for the intended entry point.
+upload_protocol = esp-builtin
+debug_tool = esp-builtin
+debug_init_break = tbreak app_main
+board_build.f_cpu = 240000000L
+board_build.flash_mode = qio
+[% if psram_mode == 'octal' %]
+board_build.psram_type = opi
+[% endif %]
+board_upload.flash_size = [[ flash_size_mb ]]MB
+board_upload.maximum_size = [[ flash_size_mb * 1024 * 1024 ]]
+; CONFIG_* macros come from sdkconfig.defaults, not build_flags — don't redefine here.
+build_flags =
+    -std=[[ cpp_standard ]]
+    -Wall -Wextra -Wpedantic
+build_src_filter =
+    +<*>
+    -<../test/>
+test_ignore = test_core_example
+
+; ----------------------------------------------------- ON-TARGET UNITY TESTS
+[env:test_esp32s3]
+extends = env:esp32s3
+test_framework = unity
+test_ignore = test_core_example

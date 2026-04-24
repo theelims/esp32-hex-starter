@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "pio: native tests", "type": "shell", "command": "pio test -e native", "group": { "kind": "test", "isDefault": true } },
+    { "label": "pio: build native", "type": "shell", "command": "pio run -e native", "group": "build" },
+    { "label": "pio: build target", "type": "shell", "command": "pio run -e esp32s3", "group": "build" },
+    { "label": "pio: flash target", "type": "shell", "command": "pio run -e esp32s3 -t upload" },
+    { "label": "pio: monitor",      "type": "shell", "command": "pio device monitor -e esp32s3" },
+    { "label": "pio: target tests", "type": "shell", "command": "pio test -e test_esp32s3" },
+    { "label": "hil: pytest",       "type": "shell", "command": "pytest -m hil", "options": { "cwd": "${workspaceFolder}/tools/hil" } }
+  ]
+}

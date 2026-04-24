@@ -1,0 +1,16 @@
+{
+  "clangd.arguments": [
+    "--compile-commands-dir=.pio/build/esp32s3",
+    "--header-insertion=never",
+    "--background-index"
+  ],
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "files.associations": {
+    "*.hpp": "cpp",
+    "*.cpp": "cpp"
+  },
+  "platformio-ide.useBuiltinPIOCore": true,
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "terminal.integrated.defaultProfile.windows": "WSL",
+  "remote.WSL.fileWatcher.polling": false
+}

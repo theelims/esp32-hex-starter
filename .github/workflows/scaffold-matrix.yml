@@ -1,0 +1,63 @@
+name: scaffold-matrix
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fast:
+    name: scaffold & lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_hil: [true, false]
+        enable_mcp: [true, false]
+        board_variant:
+          - esp32-s3-devkitc-n16r8
+          - esp32-s3-devkitc-1
+          - esp32-c6-devkitc-1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install copier
+        run: uv tool install copier
+      - name: Scaffold
+        run: |
+          mkdir -p /tmp/scratch
+          uv tool run copier copy --trust --defaults --force . /tmp/scratch \
+            --data project_name=ci_demo \
+            --data enable_hil=${{ matrix.enable_hil }} \
+            --data enable_mcp=${{ matrix.enable_mcp }} \
+            --data board_variant=${{ matrix.board_variant }}
+      - name: Assert structure
+        run: |
+          test -f /tmp/scratch/ci_demo/platformio.ini
+          test -f /tmp/scratch/ci_demo/CLAUDE.md
+          test -d /tmp/scratch/ci_demo/components/core
+
+  native-build:
+    name: pio test -e native
+    runs-on: ubuntu-latest
+    needs: fast
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Install copier & platformio
+        run: |
+          uv tool install copier
+          pip install platformio
+      - name: Scaffold default project
+        run: |
+          mkdir -p /tmp/scratch
+          uv tool run copier copy --trust --defaults --force . /tmp/scratch \
+            --data project_name=ci_demo
+      - name: Native tests
+        working-directory: /tmp/scratch/ci_demo
+        run: pio test -e native --without-uploading

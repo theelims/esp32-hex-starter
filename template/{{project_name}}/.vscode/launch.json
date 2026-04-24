@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug target (PIO USB-JTAG, S3 built-in)",
+      "type": "platformio-debug",
+      "request": "launch",
+      "executable": "${workspaceFolder}/.pio/build/esp32s3/firmware.elf",
+      "projectEnvName": "esp32s3",
+      "toolchainBinDir": "${env:HOME}/.platformio/packages/toolchain-xtensa-esp-elf/bin",
+      "internalConsoleOptions": "openOnSessionStart",
+      "preLaunchTask": "pio: flash target"
+    },
+    {
+      "name": "Debug native test (CodeLLDB)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/.pio/build/native/program",
+      "args": ["--gtest_filter=${input:gtestFilter}"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "pio: build native"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "gtestFilter",
+      "type": "promptString",
+      "description": "GoogleTest filter (e.g. FakeClock.*)",
+      "default": "*"
+    }
+  ]
+}

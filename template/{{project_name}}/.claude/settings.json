@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pio *)",
+      "Bash(pytest *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(uv *)",
+      "Bash(uvx *)",
+      "Bash(git *)",
+      "Bash(clang-format *)",
+      "Bash(clang-tidy *)",
+      "Bash(pre-commit *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(rm -rf .pio/*)",
+      "Bash(chmod *)",
+      "Bash(usbipd *)"
+    ]
+  }
+}

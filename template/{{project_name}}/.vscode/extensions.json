@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "platformio.platformio-ide",
+    "ms-vscode-remote.remote-wsl",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "vadimcn.vscode-lldb",
+    "anthropic.claude-code",
+    "ms-python.python"
+  ]
+}
