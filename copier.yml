@@ -10,20 +10,14 @@ _envops:
 _answers_file: .copier-answers.yml
 _templates_suffix: .jinja
 _exclude:
-  - "[% if not enable_hil %]tools/hil/**[% endif %]"
-  - "[% if not enable_hil %]tools/hil[% endif %]"
+  - "[% if not enable_hil %]*/tools/hil[% endif %]"
   - "[% if not enable_mcp %].mcp.json[% endif %]"
 
-_tasks:
-  - "uv sync || true"
-  - "uv run pre-commit install || true"
-  - "uv run pre-commit install --hook-type pre-push || true"
-
 _message_after_copy: |
-  Project scaffolded into ./{{ project_name }}
+  Project scaffolded into ./[[ project_name ]]
 
   Next:
-    cd {{ project_name }}
+    cd [[ project_name ]]
     uv sync
     uv run pre-commit install
     uv run pre-commit install --hook-type pre-push
