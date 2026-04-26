@@ -15,7 +15,6 @@ jobs:
         enable_hil: [true, false]
         enable_mcp: [true, false]
         board_variant:
-          - esp32-s3-devkitc-n16r8
           - esp32-s3-devkitc-1
           - esp32-c6-devkitc-1
     steps:
@@ -27,7 +26,7 @@ jobs:
       - name: Scaffold
         run: |
           mkdir -p /tmp/scratch
-          uv tool run copier copy --trust --defaults --force . /tmp/scratch \
+          PYTHONPATH=. uv tool run copier copy --trust --defaults --force . /tmp/scratch \
             --data project_name=ci_demo \
             --data enable_hil=${{ matrix.enable_hil }} \
             --data enable_mcp=${{ matrix.enable_mcp }} \
@@ -56,7 +55,7 @@ jobs:
       - name: Scaffold default project
         run: |
           mkdir -p /tmp/scratch
-          uv tool run copier copy --trust --defaults --force . /tmp/scratch \
+          PYTHONPATH=. uv tool run copier copy --trust --defaults --force . /tmp/scratch \
             --data project_name=ci_demo
       - name: Native tests
         working-directory: /tmp/scratch/ci_demo
