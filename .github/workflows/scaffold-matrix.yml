@@ -14,9 +14,10 @@ jobs:
       matrix:
         enable_hil: [true, false]
         enable_mcp: [true, false]
-        board_variant:
-          - esp32-s3-devkitc-1
-          - esp32-c6-devkitc-1
+        module_part_number:
+          - ESP32-S3-WROOM-1-N16R8   # S3, octal PSRAM, 16 MB
+          - ESP32-S3-WROOM-1-N4      # S3, no PSRAM, 4 MB
+          - ESP32-C6-MINI-1-N4       # C6, no PSRAM, 4 MB
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -30,7 +31,7 @@ jobs:
             --data project_name=ci_demo \
             --data enable_hil=${{ matrix.enable_hil }} \
             --data enable_mcp=${{ matrix.enable_mcp }} \
-            --data board_variant=${{ matrix.board_variant }}
+            --data module_part_number=${{ matrix.module_part_number }}
       - name: Assert structure
         run: |
           test -f /tmp/scratch/ci_demo/platformio.ini
