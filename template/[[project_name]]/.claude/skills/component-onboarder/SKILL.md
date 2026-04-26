@@ -68,7 +68,7 @@ description: Working with the <CHIP>. Protocol, register map, known patterns, re
 (For the full map, see ../../hardware/datasheets/<chip>/register_map.md)
 
 ## Known-good driver template
-<50–100 lines of C++17, talks to II2cBus or ISpiBus port, returns
+<50–100 lines of C++, talks to II2cBus or ISpiBus port, returns
 Result<T, Error>. Must be copy-pasteable and work with the project's
 fakes for unit testing.>
 

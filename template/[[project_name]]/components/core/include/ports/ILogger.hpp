@@ -1,15 +1,15 @@
 #pragma once
+#include <source_location>
 #include <string_view>
 
 namespace ports {
 
-enum class LogLevel { Trace, Debug, Info, Warn, Error, Fatal };
+enum class LogLevel { Trace, Debug, Info, Warn, Error };
 
 struct ILogger {
     virtual ~ILogger() = default;
-
-    /// Log a line. `tag` identifies the source module (component folder name).
-    virtual void log(LogLevel level, std::string_view tag, std::string_view msg) = 0;
+    virtual void log(LogLevel level, std::string_view tag, std::string_view msg,
+                     std::source_location loc = std::source_location::current()) = 0;
 };
 
 }  // namespace ports

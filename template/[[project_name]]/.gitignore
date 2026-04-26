@@ -32,3 +32,6 @@ tools/hil/captures/
 #   - components/drivers/<chip>/include/<chip>_regs.hpp
 #   - .claude/skills/<chip>-driver/SKILL.md
 # Rationale: generated once per chip/schematic revision; diffs are meaningful.
+
+# Native test logs (one file per pio test -e native run)
+native_test_*.log

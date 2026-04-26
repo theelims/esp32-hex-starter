@@ -7,8 +7,6 @@ pytest). This document is the glue that says *when to use which*.
 
 ```
                   ┌───────────────────────────────────────┐
-          slow ↑  │ 5 · Field soak / long-run (hours)     │  pytest -m soak   (cron, not this repo)
-                  ├───────────────────────────────────────┤
                   │ 4 · HIL bench (scope + PPK2)          │  uv run pytest -m hil
                   ├───────────────────────────────────────┤
                   │ 3 · On-target Unity (flash + run)     │  pio test -e test_esp32s3
@@ -32,17 +30,16 @@ pytest). This document is the glue that says *when to use which*.
   sleep/wake, hardware-clocked timing.
 - **Tier 4 HIL** is only for: electrical behaviour (rise time, overshoot), power (deep-sleep µA),
   and end-to-end protocol against a real sensor.
-- **Tier 5** soak runs are a separate repo / cron job.
 
 A PR's test file mix should look like a pyramid. A PR that's 90% tier 3 tests with no tier 1 is
 a red flag.
 
 ## ESP_LOG conventions
 
-- `components/core/include/ports/ILogger.hpp` exists with levels `Trace/Debug/Info/Warn/Error/Fatal`.
-  Core code logs through it, never via `ESP_LOGx` directly.
-- `components/adapters_esp32/src/LoggerEspLog.cpp` forwards to `ESP_LOGx` using a tag. (Scaffold
-  leaves this TODO — add on first real log-dependent feature.)
+- `components/core/include/ports/ILogger.hpp` exists with levels `Trace/Debug/Info/Warn/Error`
+  (mirrors ESP_LOG 1:1). Core code logs through it, never via `ESP_LOGx` directly.
+- `components/adapters_esp32/src/LoggerEspLog.cpp` forwards to `esp_log_write()` with a tag.
+  Uses `std::source_location` to embed call-site `[file.cpp:line]` at the end of each line.
 - `components/adapters_fake/include/fakes/FakeLogger.hpp` records entries into
   `std::vector<LogEntry>` so tests assert on log content.
 - `main/logging.cpp` centralizes per-tag levels (see `embedded-coding-rules.md` rule 23).
@@ -54,7 +51,10 @@ Rules:
 
 - No `ESP_LOGx` inside `IRAM_ATTR` (enforced by `isr-hygiene.sh`).
 - No logs inside tight loops — log a summary once per N iterations or once per state change.
-- Tag per module; tag names are `kCamelCase` matching the component folder.
+- Tag per module; tag names are short lowercase strings matching the component folder
+  (e.g. `"imu"`, `"wifi"`).
+- `configure_logging()` runtime filters (via `esp_log_level_set`) apply to `LoggerEspLog` only;
+  `FakeLogger` always passes all levels to keep native test assertions stable.
 
 ## Coverage & fuzzing on native (opt-in)
 

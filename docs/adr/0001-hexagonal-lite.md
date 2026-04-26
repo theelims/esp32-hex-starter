@@ -17,7 +17,7 @@ projects, service locators. "Hexagonal-lite" is the compromise.
 
 Three-tier layout:
 
-- `components/core/` — pure C++17, no ESP-IDF or Arduino includes. Ports live here.
+- `components/core/` — pure C++, no ESP-IDF or Arduino includes. Ports live here.
 - `components/adapters_esp32/` — real ESP-IDF bindings. The only place hardware headers
   are allowed.
 - `components/adapters_fake/` — in-memory fakes used by GoogleTest on the host.

@@ -5,13 +5,6 @@ ordered from "needed before first real use" to "nice to have".
 
 ## Before first real use
 
-- [x] **Verify copier `_exclude` works** with the custom `[% %]` delimiters for
-      `tools/hil/**` and `.mcp.json` gating. `tests/test_scaffold.py` confirms both
-      `enable_hil=false` and `enable_mcp=false` correctly drop the excluded paths.
-- [x] **Run the test matrix locally.** Fast tier (`pytest`) passes; 2 slow tests skip because
-      PlatformIO is not installed. No regressions from the Copier-delimiter fixes.
-- [ ] **Pin the GitHub slug.** `README.md` still references `theelims/esp32-hex-starter`.
-      Replace with the actual org/repo when the template is pushed.
 - [ ] **Publish to a git remote** and sanity-run `uvx copier copy gh:<org>/<repo> /tmp/demo`
       with `project_name=demo_board`. Verify it produces a tree that compiles.
 
@@ -28,17 +21,17 @@ on first real need, not speculatively:
       See `docs/debugging.md` § "Panic backtrace decode".
 - [ ] **`.claude/agents/gdb-diagnose.md`** — sub-agent that wraps `decode_backtrace.py`.
       User pastes panic log → agent returns annotated backtrace + hypothesis.
-- [ ] **`main/logging.cpp`** — centralises per-tag ESP_LOG levels. See
+- [x] **`main/logging.cpp`** — centralises per-tag ESP_LOG levels. See
       `docs/embedded-coding-rules.md` rule 23. Scaffold as a stub whose
       `configure_logging()` is called first thing in `app_main()`.
-- [ ] **`components/adapters_esp32/src/LoggerEspLog.cpp`** — real `ILogger`
-      implementation that forwards to `ESP_LOGx` with a tag. Referenced in
+- [x] **`components/adapters_esp32/src/LoggerEspLog.cpp`** — real `ILogger`
+      implementation that forwards to `esp_log_write()` with a tag and call-site
+      attribution via `std::source_location`. Referenced in
       `docs/testing-strategy.md` § ESP_LOG conventions.
-- [ ] **Wire ILogger into core.** `ILogger` interface is already designed
+- [x] **Wire ILogger into core.** `ILogger` interface is already designed
       (`components/core/include/ports/ILogger.hpp`); `FakeLogger` exists for tests.
-      Implement `LoggerEspLog.cpp` to forward calls to `ESP_LOGx`. Inject it as a
-      dependency into core components. `enforce-core-purity.sh` already blocks
-      `#include <esp_log.h>` in core/ via the `esp_*.h` pattern.
+      `LoggerEspLog` instantiated in `app_main()` composition root with DI comment
+      pattern. `enforce-core-purity.sh` extended to also guard `adapters_fake/`.
 
 ## Coverage & fuzzing (opt-in)
 

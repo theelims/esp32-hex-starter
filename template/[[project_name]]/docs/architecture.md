@@ -10,7 +10,7 @@
                            │ constructs
                            ▼
 ┌──────────────────────────────────────────────────────────┐
-│ components/core/  (pure C++17, host-testable)            │
+│ components/core/  (pure C++, host-testable)              │
 │   include/ports/*.hpp   ← abstract interfaces            │
 │   include/core/*.hpp    ← Result<T,E>, domain types      │
 │   src/*.cpp             ← use cases, state machines      │

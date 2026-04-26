@@ -118,13 +118,13 @@ enable_hil:
 
 enable_mcp:
   type: bool
-  help: "Configure MCP servers (.mcp.json) for Claude Code?"
+  help: "Configure esp-idf and serial MCP servers (.mcp.json) for Claude Code?"
   default: true
 
 cpp_standard:
   type: str
-  help: "C++ standard. gnu++17 is the ESP-IDF default sweet spot."
+  help: "C++ standard for both the native test env and the IDF target. gnu++23 matches ESP-IDF 5.1+ defaults and is required for std::source_location."
   choices:
-    - "gnu++17"
-    - "gnu++20"
-  default: "gnu++17"
+    - "gnu++23"
+    - "gnu++26"
+  default: "gnu++23"

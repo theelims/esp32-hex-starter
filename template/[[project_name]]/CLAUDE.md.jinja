@@ -16,7 +16,7 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 ## Architecture — non-negotiable rules
 
 **Three tiers:**
-1. `components/core/` — pure C++17 logic, no ESP-IDF or Arduino includes. Compiles for host AND target.
+1. `components/core/` — pure C++ logic, no ESP-IDF or Arduino includes. Compiles for host AND target.
 2. `components/adapters_esp32/` — real implementations of the core ports. Only place ESP-IDF headers are allowed.
 3. `components/adapters_fake/` — in-memory fakes used by native tests.
 
@@ -45,7 +45,7 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 - Python tooling is managed by **uv**. Use `uv run <cmd>` not `python <cmd>`. Add deps with `uv add`, never `pip install`.
 
 ## Coding style
-- C++17, no exceptions, no RTTI (see sdkconfig.defaults).
+- C++, no exceptions, no RTTI (see sdkconfig.defaults).
 - Return `core::Result<T, Error>` instead of throwing. The type is `[[nodiscard]]`; never drop a Result on the floor.
 - **Result invariant** (exceptions are off, so `std::get` on the wrong variant is UB):
   call `is_ok()` before `value()` and `is_err()` before `error()`. The `code-reviewer` sub-agent rejects unchecked access.

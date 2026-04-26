@@ -4,7 +4,7 @@ A [Copier](https://copier.readthedocs.io/) template for scaffolding an **ESP32-S
 
 The generated project uses:
 
-- **ESP-IDF via PlatformIO** (C++17, exceptions/RTTI off).
+- **ESP-IDF via PlatformIO** (C++, exceptions/RTTI off).
 - **Ports & Adapters** so ~80% of the firmware is host-testable with GoogleTest.
 - **uv** as the Python package manager for sim and HIL tooling.
 - **Claude Code integration**: `CLAUDE.md`, sub-agents, skills, hooks, MCP.
@@ -31,7 +31,7 @@ This template rethinks embedded development for agentic workflows by amplifying 
 
 Full ports-and-adapters (DI containers, service locators, layer-per-project) is overkill for a single-MCU firmware. "Lite" keeps the testability without the ceremony:
 
-- **`components/core/`** — pure C++17, no ESP-IDF or Arduino includes. Ports (interfaces) live here.
+- **`components/core/`** — pure C++, no ESP-IDF or Arduino includes. Ports (interfaces) live here.
 - **`components/adapters_esp32/`** — real ESP-IDF bindings. The only place hardware headers are allowed.
 - **`components/adapters_fake/`** — in-memory fakes used by GoogleTest on the host.
 - **`main/main.cpp`** — the composition root. Adapters are constructed here and injected by reference into core code. No DI container.
