@@ -1,0 +1,52 @@
+# HIL bench (tier 4)
+
+Hardware-in-the-loop tests against the real board with physical instrumentation.
+Marked with `@pytest.mark.hil`; skipped by default.
+
+## Hardware
+[% if 'scope' in hil_instruments %]
+- **Scope:** Siglent SDS1104X-E (SCPI over LAN/TCP)
+[% endif %]
+[% if 'ppk2' in hil_instruments %]
+- **Power meter:** Nordic Power Profiler Kit II (USB serial)
+[% endif %]
+[% if 'sigrok' in hil_instruments %]
+- **Logic analyser:** any sigrok-compatible device (default driver: `fx2lafw`)
+  System install required: `sudo apt install sigrok-cli`
+[% endif %]
+- **DUT:** ESP32 board under test (USB serial)
+
+## Environment
+
+```bash
+export DUT_PORT="/dev/ttyACM0"
+[% if 'scope' in hil_instruments %]
+export SCOPE_ADDR="TCPIP::<scope-ip>::INSTR"   # default: TCPIP::192.168.1.50::INSTR
+[% endif %]
+[% if 'ppk2' in hil_instruments %]
+export PPK2_PORT="/dev/ttyACM1"
+[% endif %]
+[% if 'sigrok' in hil_instruments %]
+export SIGROK_DRIVER="fx2lafw"    # or: saleae-logic, cypress-fx2, ...
+export SIGROK_CONN="1.5"          # optional: USB bus.device identifier
+[% endif %]
+```
+
+## Run
+
+```bash
+uv run pytest -m hil                   # all HIL tests
+uv run pytest -m hil -v                # verbose
+```
+
+## Scope
+
+Use HIL only for tests that genuinely need it:
+- Electrical behaviour — rise time, overshoot, settling.
+- Power — deep-sleep µA, wake budgets, inrush.
+[% if 'sigrok' in hil_instruments %]
+- Digital protocol capture — SPI/I2C/UART timing and decoding.
+[% endif %]
+- End-to-end protocol against a real sensor.
+
+Everything else goes in `test/native/` or `tools/sim/tests/`.

@@ -15,7 +15,7 @@ installed editable.
 ## Decision
 
 - Root `pyproject.toml` is a uv workspace. Members: `tools/sim`, `tools/hil` (when
-  enabled), plus root codegen scripts registered under `[project.scripts]`.
+  `hil_instruments` is non-empty), plus root codegen scripts registered under `[project.scripts]`.
 - Single `.venv/` at the project root, single `uv.lock` (committed).
 - `uv run <cmd>` for everything. No `source .venv/bin/activate`.
 - **`pip` is disallowed** in `.claude/settings.json` to stop agents from drifting.

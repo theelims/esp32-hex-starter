@@ -49,9 +49,9 @@ Mentioned in `docs/testing-strategy.md` as "two cheap additions, off by default"
 - [x] **C6 board variant.** `board_variant = esp32-c6-devkitc-1` is a questionnaire
       option and `platformio.ini.jinja` already branches on it (board, psram_mode
       conditional). Needs real C6 hardware to validate the generated `sdkconfig.defaults`.
-- [x] **`enable_hil=false` scaffolded project still imports `hil` in
+- [x] **`hil_instruments=[]` scaffolded project still imports `hil` in
       root pyproject.** Verified: `pyproject.toml.jinja` guards both
-      `[tool.uv.workspace].members` and `[tool.mypy].files` with `[% if enable_hil %]`.
+      `[tool.uv.workspace].members` and `[tool.mypy].files` with `[% if hil_instruments %]`.
 - [x] **Expand `board.yaml` with ESP32 variant metadata.** Done via
       `module_part_number` master key — `extensions/esp32_helpers.py`
       derives flash size, mode, voltage, PSRAM, clock, package; new

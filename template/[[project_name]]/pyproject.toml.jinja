@@ -1,7 +1,7 @@
 [project]
 name = "[[ project_name ]]-tooling"
 version = "0.1.0"
-description = "Python tooling for [[ project_name ]] (sim[% if enable_hil %] + HIL bench[% endif %])"
+description = "Python tooling for [[ project_name ]] (sim[% if hil_instruments %] + HIL bench[% endif %])"
 authors = [{name = "[[ author_name ]]", email = "[[ author_email ]]"}]
 requires-python = ">=3.10"
 dependencies = [
@@ -26,15 +26,15 @@ build-backend = "hatchling.build"
 packages = ["tools"]
 
 [tool.uv.workspace]
-members = ["tools/sim"[% if enable_hil %], "tools/hil"[% endif %]]
+members = ["tools/sim"[% if hil_instruments %], "tools/hil"[% endif %]]
 
 [tool.uv.sources]
 simhost = { workspace = true }
-[% if enable_hil %]
+[% if hil_instruments %]
 hil     = { workspace = true }
 [% endif %]
 
 [tool.mypy]
 strict = true
 python_version = "3.10"
-files = ["tools/gen_pins.py", "tools/sim/simhost"[% if enable_hil %], "tools/hil/hil"[% endif %]]
+files = ["tools/gen_pins.py", "tools/sim/simhost"[% if hil_instruments %], "tools/hil/hil"[% endif %]]

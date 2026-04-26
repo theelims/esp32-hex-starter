@@ -7,7 +7,7 @@ pytest). This document is the glue that says *when to use which*.
 
 ```
                   ┌───────────────────────────────────────┐
-                  │ 4 · HIL bench (scope + PPK2)          │  uv run pytest -m hil
+                  │ 4 · HIL bench (scope / PPK2 / sigrok)  │  uv run pytest -m hil
                   ├───────────────────────────────────────┤
                   │ 3 · On-target Unity (flash + run)     │  pio test -e test_esp32s3
                   ├───────────────────────────────────────┤
@@ -29,7 +29,8 @@ pytest). This document is the glue that says *when to use which*.
 - **Tier 3** (Unity on chip) is only for: ISRs, DMA, FreeRTOS task interactions, flash/NVS,
   sleep/wake, hardware-clocked timing.
 - **Tier 4 HIL** is only for: electrical behaviour (rise time, overshoot), power (deep-sleep µA),
-  and end-to-end protocol against a real sensor.
+  digital protocol capture (SPI/I2C/UART logic decode via sigrok), and end-to-end protocol
+  against a real sensor.
 
 A PR's test file mix should look like a pyramid. A PR that's 90% tier 3 tests with no tier 1 is
 a red flag.

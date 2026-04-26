@@ -12,7 +12,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        enable_hil: [true, false]
+        hil_instruments:
+          - "[]"
+          - "[scope,ppk2,sigrok]"
         enable_mcp: [true, false]
         module_part_number:
           - ESP32-S3-WROOM-1-N16R8   # S3, octal PSRAM, 16 MB
@@ -29,7 +31,7 @@ jobs:
           mkdir -p /tmp/scratch
           PYTHONPATH=. uv tool run copier copy --trust --defaults --force . /tmp/scratch \
             --data project_name=ci_demo \
-            --data enable_hil=${{ matrix.enable_hil }} \
+            --data "hil_instruments=${{ matrix.hil_instruments }}" \
             --data enable_mcp=${{ matrix.enable_mcp }} \
             --data module_part_number=${{ matrix.module_part_number }}
       - name: Assert structure
@@ -37,6 +39,13 @@ jobs:
           test -f /tmp/scratch/ci_demo/platformio.ini
           test -f /tmp/scratch/ci_demo/CLAUDE.md
           test -d /tmp/scratch/ci_demo/components/core
+          if [[ "${{ matrix.hil_instruments }}" != "[]" ]]; then
+            test -d /tmp/scratch/ci_demo/tools/hil
+            test -f /tmp/scratch/ci_demo/tools/hil/hil/sigrok_la.py
+            test -d /tmp/scratch/ci_demo/tools/hil/tests/sigrok
+          else
+            test ! -d /tmp/scratch/ci_demo/tools/hil
+          fi
 
   native-build:
     name: pio test -e native

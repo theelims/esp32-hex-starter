@@ -1,0 +1,48 @@
+import os
+
+import pytest
+
+from hil.dut import DUT
+[% if 'scope' in hil_instruments %]
+from hil.scope import SDS1104
+[% endif %]
+[% if 'ppk2' in hil_instruments %]
+from hil.ppk2 import PPK2
+[% endif %]
+[% if 'sigrok' in hil_instruments %]
+from hil.sigrok_la import SigrokLA
+[% endif %]
+
+
+@pytest.fixture()
+def dut():
+    port = os.environ.get("DUT_PORT", "/dev/ttyACM0")
+    d = DUT(port)
+    yield d
+    d.close()
+
+[% if 'scope' in hil_instruments %]
+@pytest.fixture(scope="session")
+def scope():
+    addr = os.environ.get("SCOPE_ADDR", "TCPIP::192.168.1.50::INSTR")
+    s = SDS1104(addr)
+    yield s
+    s.close()
+[% endif %]
+
+[% if 'ppk2' in hil_instruments %]
+@pytest.fixture(scope="session")
+def ppk2():
+    port = os.environ.get("PPK2_PORT", "/dev/ttyACM1")
+    p = PPK2(port)
+    yield p
+    p.close()
+[% endif %]
+
+[% if 'sigrok' in hil_instruments %]
+@pytest.fixture(scope="session")
+def la():
+    driver = os.environ.get("SIGROK_DRIVER", "fx2lafw")
+    conn = os.environ.get("SIGROK_CONN")
+    return SigrokLA(driver=driver, conn=conn)
+[% endif %]

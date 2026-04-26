@@ -8,7 +8,7 @@ The generated project uses:
 - **Ports & Adapters** so ~80% of the firmware is host-testable with GoogleTest.
 - **uv** as the Python package manager for sim and HIL tooling.
 - **Claude Code integration**: `CLAUDE.md`, sub-agents, skills, hooks, MCP.
-- Optional **HIL bench** (Siglent SDS1104X-E + Nordic PPK2).
+- Optional **HIL bench** (Siglent SDS1104X-E + Nordic PPK2 + sigrok logic analyser — multiselect).
 
 ## Motivation
 
@@ -92,7 +92,7 @@ uv run pre-commit install --hook-type pre-push
 pio run -e esp32s3
 ```
 
-Copier will ask a short series of questions (project name, board variant, whether to include HIL and MCP). Defaults target the ESP32-S3 DevKitC-N16R8.
+Copier will ask a short series of questions (project name, board variant, which HIL bench instruments to include, whether to enable MCP). Defaults target the ESP32-S3 DevKitC-N16R8 with scope + PPK2.
 
 ## Update an existing project
 

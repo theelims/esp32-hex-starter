@@ -1,3 +1,4 @@
+_min_copier_version: "9.3.0"
 _subdirectory: template
 _envops:
   keep_trailing_newline: true
@@ -12,7 +13,13 @@ _templates_suffix: .jinja
 _jinja_extensions:
   - extensions.esp32_helpers:Esp32HelpersExtension
 _exclude:
-  - "[% if not enable_hil %]*/tools/hil[% endif %]"
+  - "[% if not hil_instruments %]*/tools/hil[% endif %]"
+  - "[% if 'scope' not in hil_instruments %]*/tools/hil/hil/scope.py[% endif %]"
+  - "[% if 'ppk2' not in hil_instruments %]*/tools/hil/hil/ppk2.py[% endif %]"
+  - "[% if 'sigrok' not in hil_instruments %]*/tools/hil/hil/sigrok_la.py[% endif %]"
+  - "[% if 'scope' not in hil_instruments %]*/tools/hil/tests/scope[% endif %]"
+  - "[% if 'ppk2' not in hil_instruments %]*/tools/hil/tests/ppk2[% endif %]"
+  - "[% if 'sigrok' not in hil_instruments %]*/tools/hil/tests/sigrok[% endif %]"
   - "[% if not enable_mcp %].mcp.json[% endif %]"
   - "[% if pio_board_strategy != 'derive' %]*/boards[% endif %]"
 
@@ -111,10 +118,20 @@ console_baud:
   help: "Cosmetic for `pio device monitor` UI. USB-Serial/JTAG ignores baud."
   default: 115200
 
-enable_hil:
-  type: bool
-  help: "Include the HIL bench (scope + PPK2) tooling under tools/hil/?"
-  default: true
+hil_instruments:
+  type: yaml
+  multiselect: true
+  help: |
+    Which HIL bench instruments are available? Select all that apply.
+    'scope'  = Siglent SDS1104X-E (SCPI/LAN).
+    'ppk2'   = Nordic Power Profiler Kit II (USB serial).
+    'sigrok' = any sigrok-compatible logic analyser (requires sigrok-cli system package).
+    Leave empty to skip tools/hil/ entirely.
+  choices:
+    - scope
+    - ppk2
+    - sigrok
+  default: [scope, ppk2]
 
 enable_mcp:
   type: bool

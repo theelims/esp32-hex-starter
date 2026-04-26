@@ -1,0 +1,32 @@
+[project]
+name = "hil"
+version = "0.1.0"
+description = "Hardware-in-the-loop bench tooling"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pyserial>=3.5",
+[% if 'scope' in hil_instruments %]
+    "pyvisa>=1.13",
+    "pyvisa-py>=0.7",         # pure-python VISA backend, no NI drivers
+[% endif %]
+[% if 'ppk2' in hil_instruments %]
+    "ppk2-api>=0.9",          # Nordic PPK2
+[% endif %]
+    # sigrok: system package — not pip-installable.
+    # Install with: sudo apt install sigrok-cli
+]
+
+[dependency-groups]
+dev = ["pytest>=7.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["hil"]
+
+[tool.pytest.ini_options]
+markers = ["hil: hardware-in-the-loop tests (require bench)"]
+addopts = "-m 'not hil'"

@@ -12,7 +12,7 @@ You write tests. The authoritative pyramid is in `docs/testing-strategy.md`; pic
 1. **Tier 1 · Native GoogleTest + fakes.** This is the default. Use `components/adapters_fake/` for dependencies. Test file at `test/native/test_<subject>/test_main.cpp`. Run with `pio test -e native`.
 2. **Tier 2 · Python device simulation.** Reach for this only when the scenario is painful in C++ — recorded sensor traces, multi-device bus choreography, fault injection. File under `tools/sim/tests/`.
 3. **Tier 3 · Unity on target.** Only for behaviour that genuinely requires on-chip execution: ISRs, DMA, RTOS scheduling, flash/NVS, sleep/wake. Unity syntax, file at `test/target/test_<subject>/test_main.cpp`.
-4. **Tier 4 · HIL bench.** Only for electrical, power, or real-sensor protocol tests. Marker `@pytest.mark.hil`, file under `tools/hil/tests/`.
+4. **Tier 4 · HIL bench.** Only for electrical, power, digital protocol capture, or real-sensor protocol tests. Marker `@pytest.mark.hil`, file under `tools/hil/tests/<instrument>/` (e.g. `tests/scope/`, `tests/ppk2/`, `tests/sigrok/`).
 
 State which tier you picked in your PR summary and why. If the answer is "tier 3 because it was easier" rather than "tier 3 because tier 1 genuinely can't cover it", rewrite as tier 1.
 

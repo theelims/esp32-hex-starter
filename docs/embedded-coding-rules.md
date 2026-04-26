@@ -26,7 +26,7 @@ pre-commit hook; the rest are prose and are policed by the `code-reviewer` sub-a
 ## Types
 
 7. **C++ is statically typed — Python must be too.** `mypy --strict` runs in pre-commit over
-   `tools/`. The hook covers `tools/codegen`, `tools/sim/simhost`, `tools/hil/hil`. Add type
+   `tools/`. The hook covers `tools/codegen`, `tools/sim/simhost`, `tools/hil/hil` (including `sigrok_la`). Add type
    stubs or `py.typed` markers as needed — do not use `# type: ignore` without a comment that
    explains why.
 8. **`enum class` over `enum`** and over `#define` for states, error codes, modes. Prefer

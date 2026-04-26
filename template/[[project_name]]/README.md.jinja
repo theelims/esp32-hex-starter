@@ -13,8 +13,8 @@ pio run  -e esp32s3           # build target firmware
 pio run  -e esp32s3 -t upload # flash via built-in USB-JTAG
 pio device monitor -e esp32s3 # serial console
 pio test -e test_esp32s3      # on-chip Unity tests (slow)
-[% if enable_hil %]
-uv run pytest -m hil          # HIL bench tests (scope + PPK2)
+[% if hil_instruments %]
+uv run pytest -m hil          # HIL bench tests[% if 'sigrok' in hil_instruments %] (scope / PPK2 / sigrok)[% else %] (scope + PPK2)[% endif %]
 [% endif %]
 ```
 
@@ -26,8 +26,8 @@ uv run pytest -m hil          # HIL bench tests (scope + PPK2)
 - `components/drivers/` — device drivers (talk to ports, not hardware).
 - `main/main.cpp` — composition root (wires adapters to core).
 - `tools/sim/` — optional Python device simulation.
-[% if enable_hil %]
-- `tools/hil/` — hardware-in-the-loop bench (Siglent SDS1104X-E + Nordic PPK2).
+[% if hil_instruments %]
+- `tools/hil/` — hardware-in-the-loop bench ([% if 'scope' in hil_instruments %]Siglent SDS1104X-E[% endif %][% if 'ppk2' in hil_instruments %] + Nordic PPK2[% endif %][% if 'sigrok' in hil_instruments %] + sigrok LA[% endif %]).
 [% endif %]
 
 ## Architecture

@@ -170,11 +170,24 @@ def test_partition_csv_custom_emits_stub(scratch: Path) -> None:
     assert _parse_partitions_csv(csv) == []
 
 
-def test_hil_off_drops_hil_tree(scratch: Path) -> None:
-    _copier_copy(scratch, {"project_name": "no_hil", "enable_hil": "false"})
+def test_hil_empty_drops_hil_tree(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "no_hil", "hil_instruments": "[]"})
     project = scratch / "no_hil"
     assert not (project / "tools" / "hil").exists()
     assert (project / "tools" / "sim").is_dir()
+
+
+def test_hil_sigrok_only_excludes_scope_and_ppk2(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "sigrok_only", "hil_instruments": "[sigrok]"})
+    project = scratch / "sigrok_only"
+    hil = project / "tools" / "hil"
+    assert hil.is_dir()
+    assert (hil / "hil" / "sigrok_la.py").exists()
+    assert not (hil / "hil" / "scope.py").exists()
+    assert not (hil / "hil" / "ppk2.py").exists()
+    assert (hil / "tests" / "sigrok").is_dir()
+    assert not (hil / "tests" / "scope").exists()
+    assert not (hil / "tests" / "ppk2").exists()
 
 
 def test_mcp_off_drops_mcp_config(scratch: Path) -> None:

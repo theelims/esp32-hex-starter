@@ -9,8 +9,8 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 - MCU: ESP32-S3-WROOM-1, [[ flash_size_mb ]] MB flash[% if psram_mode != 'none' %], [[ psram_mode ]] PSRAM[% endif %] ([[ board_variant ]])
 - Debug: built-in USB-JTAG/Serial — no external probe
 - Serial console: USB Serial/JTAG at 115200 baud
-[% if enable_hil %]
-- HIL bench: Siglent SDS1104X-E (LAN, SCPI) + Nordic PPK2
+[% if hil_instruments %]
+- HIL bench:[% if 'scope' in hil_instruments %] Siglent SDS1104X-E (LAN, SCPI)[% endif %][% if 'ppk2' in hil_instruments %] + Nordic PPK2[% endif %][% if 'sigrok' in hil_instruments %] + sigrok LA[% endif %]
 [% endif %]
 
 ## Architecture — non-negotiable rules
@@ -28,8 +28,8 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 ## Test strategy
 - Native (fast inner loop): `pio test -e native` — GoogleTest + gMock, runs on WSL2 host.
 - Target smoke: `pio test -e test_esp32s3` — Unity on-chip, slower.
-[% if enable_hil %]
-- HIL: `pytest -m hil` in `tools/hil/` — drives scope + PPK2 against the real board. Opt-in.
+[% if hil_instruments %]
+- HIL: `pytest -m hil` in `tools/hil/` — drives[% if 'scope' in hil_instruments %] scope[% endif %][% if 'ppk2' in hil_instruments %] + PPK2[% endif %][% if 'sigrok' in hil_instruments %] + sigrok LA[% endif %] against the real board. Opt-in.
 [% endif %]
 - Python device sim: `uv run pytest tools/sim/tests` — for integration tests with fake peripherals.
 
@@ -39,7 +39,7 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 - Monitor: `pio device monitor -e esp32s3`
 - Native tests: `pio test -e native`
 - Target tests: `pio test -e test_esp32s3`
-[% if enable_hil %]
+[% if hil_instruments %]
 - HIL tests: `uv run pytest -m hil` (from repo root)
 [% endif %]
 - Python tooling is managed by **uv**. Use `uv run <cmd>` not `python <cmd>`. Add deps with `uv add`, never `pip install`.
