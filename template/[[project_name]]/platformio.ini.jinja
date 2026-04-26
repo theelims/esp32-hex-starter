@@ -31,7 +31,12 @@ test_ignore = target/test_smoke
 ; ------------------------------------------------------------------ TARGET
 [env:esp32s3]
 platform = espressif32
-[% if board_variant == 'esp32-c6-devkitc-1' %]
+[% if pio_board_strategy == 'derive' %]
+; Custom board manifest auto-generated from module_part_number=[[ module_part_number ]].
+; Flash mode, flash size, and CPU freq live in boards/[[ project_name ]].json.
+board = [[ project_name ]]
+board_dir = ./boards
+[% elif board_variant == 'esp32-c6-devkitc-1' %]
 board = esp32-c6-devkitc-1
 [% else %]
 board = esp32-s3-devkitc-1
@@ -39,20 +44,13 @@ board = esp32-s3-devkitc-1
 framework = espidf
 ; Cosmetic under USB-Serial/JTAG — the host side ignores baud.
 ; Kept only so PIO's monitor UI has a value to display.
-monitor_speed = 115200
-; USB-JTAG/Serial (built-in on S3) — no external probe needed.
+monitor_speed = [[ console_baud ]]
+; USB-JTAG/Serial (built-in on S3/C6) — no external probe needed.
 ; debug_tool=esp-builtin means `pio debug` starts OpenOCD automatically;
 ; see .vscode/launch.json and docs/debugging.md for the intended entry point.
 upload_protocol = esp-builtin
 debug_tool = esp-builtin
 debug_init_break = tbreak app_main
-board_build.f_cpu = 240000000L
-board_build.flash_mode = qio
-[% if psram_mode == 'octal' %]
-board_build.psram_type = opi
-[% endif %]
-board_upload.flash_size = [[ flash_size_mb ]]MB
-board_upload.maximum_size = [[ flash_size_mb * 1024 * 1024 ]]
 ; CONFIG_* macros come from sdkconfig.defaults, not build_flags — don't redefine here.
 build_flags =
     -std=[[ cpp_standard ]]

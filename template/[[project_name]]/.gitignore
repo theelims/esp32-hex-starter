@@ -16,9 +16,6 @@ __pycache__/
 *.egg-info/
 # NOTE: uv.lock is COMMITTED (like Cargo.lock). Do not add it here.
 
-# GSD working area (managed by GSD itself)
-.planning/
-
 # VS Code workspace-local (per-user)
 .vscode/*.log
 

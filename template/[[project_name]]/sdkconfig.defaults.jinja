@@ -1,3 +1,4 @@
+[%- set p = module_part_number | parse_part_number -%]
 # Project-wide sdkconfig overrides. PlatformIO picks these up at build time.
 
 # C++ exceptions off, RTTI off (standard embedded policy — override if needed).
@@ -6,30 +7,30 @@
 CONFIG_COMPILER_CXX_EXCEPTIONS=n
 CONFIG_COMPILER_CXX_RTTI=n
 
-# Flash size
-[% if flash_size_mb == 4 %]
-CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
-[% elif flash_size_mb == 8 %]
-CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
-[% elif flash_size_mb == 16 %]
-CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
-[% elif flash_size_mb == 32 %]
-CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
-[% endif %]
+# Flash size (derived from module_part_number=[[ module_part_number ]])
+CONFIG_ESPTOOLPY_FLASHSIZE_[[ p.flash_size_mb ]]MB=y
 
-[% if psram_mode == 'octal' %]
-# PSRAM: octal, 80MHz
+[% if p.psram_present %]
+# PSRAM: [[ p.psram_mode ]], 80MHz ([[ p.psram_size_mb ]]MB)
 CONFIG_SPIRAM=y
+[% if p.psram_mode == 'octal' %]
 CONFIG_SPIRAM_MODE_OCT=y
-CONFIG_SPIRAM_SPEED_80M=y
-[% elif psram_mode == 'quad' %]
-# PSRAM: quad, 80MHz
-CONFIG_SPIRAM=y
+[% else %]
 CONFIG_SPIRAM_MODE_QUAD=y
+[% endif %]
 CONFIG_SPIRAM_SPEED_80M=y
 [% else %]
-# No PSRAM on this variant.
+# No PSRAM on this module variant.
 [% endif %]
+
+# CPU frequency
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_[[ cpu_freq_mhz ]]=y
+
+# Partition table — always custom. Built-in tables (SINGLE_APP, TWO_OTA)
+# assume 4 MB flash and waste anything beyond that. The custom CSV is
+# scaffolded from partition_scheme=[[ partition_scheme ]].
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 
 # USB-JTAG/Serial as console (so logs appear over the single USB-C cable)
 CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y

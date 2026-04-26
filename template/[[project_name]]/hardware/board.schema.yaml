@@ -1,0 +1,92 @@
+# Schema for hardware/board.yaml. Used by /board-onboarder to validate edits.
+# Not a strict JSON-schema document — keep it in sync with board.yaml.jinja
+# in the template repo, and with tools/gen_pins.py for the pinout sections.
+
+board:
+  name: { type: string, required: true, description: "Project board name (e.g. 'thermostat-rev-a')." }
+  revision: { type: string, required: true, description: "Hardware revision (e.g. 'A')." }
+  description: { type: string, required: false }
+
+module:
+  # Master key — everything else under `module` and `memory` is derived from
+  # this at scaffold time by extensions.esp32_helpers.parse_part_number.
+  part_number:
+    type: string
+    required: true
+    pattern: "^ESP32(-(C|S|H|P)\\d+)?-(WROOM|WROVER|MINI|SOLO)-\\d+U?(-[NH]\\d+(R\\d+V?)?)?$"
+  chip: { type: string, required: true, description: "Pretty chip name, e.g. 'ESP32-S3'." }
+  package: { type: string, required: true, description: "Module package, e.g. 'WROOM-1'." }
+  external_antenna: { type: bool, required: true, description: "True for the -U variant." }
+  temp_grade: { type: string, required: true, choices: [normal, high] }
+
+memory:
+  flash:
+    size_mb: { type: int, required: true, choices: [4, 8, 16, 32] }
+    mode: { type: string, required: true, choices: [qio, dio, opi] }
+    freq_mhz: { type: int, required: true, choices: [40, 80, 120] }
+    voltage_v: { type: number, required: true, choices: [1.8, 3.3] }
+  psram:
+    present: { type: bool, required: true }
+    size_mb: { type: int, required: true }
+    mode: { type: string, required: true, choices: [none, quad, octal] }
+    speed_mhz: { type: int, required: true }
+
+clock:
+  cpu_freq_mhz: { type: int, required: true, choices: [80, 160, 240] }
+  xtal_freq_mhz: { type: int, required: true, default: 40 }
+
+power:
+  vcc_main_v: { type: number, required: true, default: 3.3 }
+  vdd_spi_v: { type: number, required: true, choices: [1.8, 3.3] }
+  battery_powered: { type: bool, required: true, default: false }
+
+usb:
+  console: { type: string, required: true, choices: [uart0, usb_serial_jtag, usb_cdc, none] }
+  dplus_gpio: { type: int, required: true, description: "Fixed by silicon on S3/C6." }
+  dminus_gpio: { type: int, required: true }
+  otg_role: { type: string, required: true, choices: [none, tinyusb_device, tinyusb_host] }
+  vid: { type: string, required: false }
+  pid: { type: string, required: false }
+
+console:
+  uart: { type: int, required: true, choices: [0, 1, 2] }
+  baud: { type: int, required: true }
+
+programming:
+  upload_speed: { type: int, required: true }
+  upload_protocol: { type: string, required: true, choices: [esp-builtin, esptool, esp-prog, jtag] }
+  debug_protocol: { type: string, required: true, choices: [esp-builtin, jtag, ftdi] }
+  partition_scheme: { type: string, required: true, choices: [default, ota, huge_app, custom] }
+
+# Populated by /board-onboarder from the schematic. gen_pins.py reads these.
+buses:
+  # Each entry is keyed by a name (i2c0, spi2, ...) and holds bus-specific
+  # pin assignments + speed.
+  "<bus_name>":
+    # I2C buses:
+    sda: { type: string, description: "GPIO<N>" }
+    scl: { type: string, description: "GPIO<N>" }
+    speed_hz: { type: int }
+    # SPI buses:
+    mosi: { type: string }
+    miso: { type: string }
+    sclk: { type: string }
+
+peripherals:
+  # Each entry is keyed by role (imu, baro, ...) and describes one chip.
+  "<role>":
+    chip: { type: string, required: true }
+    bus: { type: string, required: true, description: "Must match a key in `buses`." }
+    cs_pin: { type: string, description: "Required for SPI peripherals." }
+    int1_pin: { type: string }
+    int2_pin: { type: string }
+    address: { type: int, description: "Required for I2C peripherals (hex)." }
+    notes: { type: string }
+
+gpios:
+  # Each entry is keyed by role and describes one freestanding GPIO.
+  "<role>":
+    pin: { type: string, required: true }
+    active_low: { type: bool, required: false }
+    pull: { type: string, choices: [up, down, none] }
+    notes: { type: string }

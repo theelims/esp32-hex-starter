@@ -69,18 +69,7 @@ Onboarding a new chip: user drops datasheet at `hardware/datasheets/<chip>/datas
 
 Schematic changes: user runs `/board-onboarder` (dry run) → reviews conflicts → `--apply`. See `docs/SCHEMATIC_CONVENTIONS.md` for the required `BOARD_*` attributes and net-naming pattern.
 
-[% if use_gsd %]
-## GSD (Get Shit Done) integration
-- GSD is installed globally and owns all spec/plan/task workflow artefacts in `.planning/`.
-- Do NOT create a `specs/` directory or `tasks.md` at project root — use GSD's slash commands (`/gsd-new-project`, `/gsd-plan`, etc.).
-- `.planning/` is gitignored; planning artefacts stay local.
-- Per GSD docs: subagent commits use `--no-verify` to avoid hook thrash during parallel execution. The orchestrator runs hooks once after each wave.
-[% endif %]
-
 ## Agent workflow
-[% if use_gsd %]
-- Start new features with `/gsd-new-project` or `/gsd-plan` — never improvise a spec.
-[% endif %]
 - For ad-hoc edits use the sub-agents in `.claude/agents/` explicitly: "use the hal-author sub-agent to add an SPI port."
 - Before touching hardware-related code, confirm the port exists in `core/` AND the peripheral exists in `board.yaml`. If either is missing, propose the fix first.
 - Before writing a driver, confirm `hardware/datasheets/<chip>/` is populated. If not, stop and run `component-onboarder`.
@@ -92,6 +81,3 @@ Schematic changes: user runs `/board-onboarder` (dry run) → reviews conflicts 
 - Do not use raw GPIO integer literals — always `board::X_PIN` from `Pins.hpp`. Pre-commit rejects violations.
 - Do not hand-edit `components/board/include/board/Pins.hpp` — it regenerates from `board.yaml`.
 - Do not transcribe register addresses by hand — use `<chip>_regs.hpp`.
-[% if use_gsd %]
-- Do not edit files inside `.planning/` — that's GSD's state.
-[% endif %]

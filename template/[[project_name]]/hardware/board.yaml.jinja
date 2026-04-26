@@ -1,0 +1,103 @@
+[%- set p = module_part_number | parse_part_number -%]
+# Hardware definition for [[ project_name ]].
+#
+# `module.part_number` is the master key — fields under `module`, `memory`,
+# `power` were derived from it at scaffold time. Override only with reason.
+#
+# `buses`, `peripherals`, and `gpios` are populated by the /board-onboarder
+# skill from your schematic, then consumed by `uv run gen-pins` to emit
+# components/board/include/board/Pins.hpp. See hardware/board.schema.yaml
+# for the full schema.
+
+board:
+  name: ""                    # e.g. "thermostat-rev-a"
+  revision: ""                # e.g. "A"
+  description: "[[ project_description ]]"
+
+module:
+  part_number: "[[ module_part_number ]]"
+  chip: "[[ p.chip_pretty ]]"
+  package: "[[ p.package ]]"
+  external_antenna: [[ p.external_antenna | string | lower ]]
+  temp_grade: "[[ p.temp_grade ]]"
+
+memory:
+  flash:
+    size_mb: [[ p.flash_size_mb ]]
+    mode: "[[ p.flash_mode ]]"
+    freq_mhz: [[ p.flash_freq_mhz ]]
+    voltage_v: [[ p.vdd_spi_v ]]
+  psram:
+    present: [[ p.psram_present | string | lower ]]
+    size_mb: [[ p.psram_size_mb ]]
+    mode: "[[ p.psram_mode ]]"
+    speed_mhz: 80
+
+clock:
+  cpu_freq_mhz: [[ cpu_freq_mhz ]]
+  xtal_freq_mhz: 40
+
+power:
+  vcc_main_v: 3.3
+  vdd_spi_v: [[ p.vdd_spi_v ]]
+  battery_powered: false
+
+usb:
+  console: usb_serial_jtag    # uart0 | usb_serial_jtag | usb_cdc | none
+  dplus_gpio: 20              # fixed by silicon on S3/C6
+  dminus_gpio: 19
+  # Reserved — not used by template today. Set otg_role to a non-`none` value
+  # only if you also wire up TinyUSB; doing so makes the built-in
+  # console/debug path on these pins unavailable.
+  otg_role: none              # none | tinyusb_device | tinyusb_host
+  vid: ""
+  pid: ""
+
+console:
+  uart: 0
+  baud: [[ console_baud ]]
+
+programming:
+  upload_speed: 460800
+  upload_protocol: esp-builtin
+  debug_protocol: esp-builtin
+  partition_scheme: [[ partition_scheme ]]
+
+# ---------- Populated by /board-onboarder from the schematic ----------
+
+buses:
+  # Example entries — remove or replace.
+  i2c0:
+    sda: ""
+    scl: ""
+    speed_hz: 400000
+  spi2:
+    mosi: ""
+    miso: ""
+    sclk: ""
+    speed_hz: 10000000
+
+peripherals:
+  # One entry per chip / device on the board. Keep the key stable — it
+  # becomes the C++ constant name prefix in Pins.hpp.
+  # Example:
+  # imu:
+  #   chip: LSM6DSO
+  #   bus: spi2
+  #   cs_pin: GPIO10
+  #   int1_pin: GPIO5
+  #   int2_pin: GPIO4
+  #   address: null            # I2C only
+  #   notes: ""
+
+gpios:
+  # Freestanding GPIOs that aren't tied to a peripheral object.
+  # Example:
+  # user_button:
+  #   pin: GPIO0
+  #   active_low: true
+  #   pull: up
+  #   notes: "BOOT button. Long-press 3s = factory reset."
+  # status_led:
+  #   pin: GPIO21
+  #   active_low: false

@@ -14,7 +14,7 @@ import hashlib
 import sys
 from pathlib import Path
 
-IGNORE_DIRS = {".git", ".pio", ".venv", "__pycache__", ".pytest_cache", ".planning"}
+IGNORE_DIRS = {".git", ".pio", ".venv", "__pycache__", ".pytest_cache"}
 
 
 def _iter_files(root: Path):

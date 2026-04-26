@@ -9,9 +9,12 @@ _envops:
   comment_end_string: "#]"
 _answers_file: .copier-answers.yml
 _templates_suffix: .jinja
+_jinja_extensions:
+  - extensions.esp32_helpers:Esp32HelpersExtension
 _exclude:
   - "[% if not enable_hil %]*/tools/hil[% endif %]"
   - "[% if not enable_mcp %].mcp.json[% endif %]"
+  - "[% if pio_board_strategy != 'derive' %]*/boards[% endif %]"
 
 _message_after_copy: |
   Project scaffolded into ./[[ project_name ]]
@@ -50,28 +53,63 @@ author_email:
 
 board_variant:
   type: str
-  help: "Target board. Controls sdkconfig.defaults and platformio.ini defaults."
+  help: "Chip family. Drives a few sdkconfig and platformio.ini branches that PIO/IDF identify by family name."
   choices:
-    - esp32-s3-devkitc-n16r8
     - esp32-s3-devkitc-1
     - esp32-c6-devkitc-1
-  default: esp32-s3-devkitc-n16r8
+  default: esp32-s3-devkitc-1
 
-psram_mode:
+module_part_number:
   type: str
-  help: "PSRAM mode — octal on N16R8, quad on most other S3 boards, none on C6."
-  choices:
-    - none
-    - quad
-    - octal
-  default: octal
-  when: "[[ board_variant != 'esp32-c6-devkitc-1' ]]"
+  help: |
+    Espressif module part number (master key — flash size, PSRAM mode,
+    voltage, antenna are all derived from this). Examples:
+    ESP32-S3-WROOM-1-N16R8, ESP32-S3-WROOM-1-N8R2, ESP32-C6-MINI-1-N4.
+  default: "ESP32-S3-WROOM-1-N16R8"
+  validator: >-
+    [% if not (module_part_number | regex_search('^ESP32(-(C|S|H|P)\d+)?-(WROOM|WROVER|MINI|SOLO)-\d+U?(-[NH]\d+(R\d+V?)?)?$')) %]
+    Must look like 'ESP32-S3-WROOM-1-N16R8'. See Espressif part-number guide.
+    [% endif %]
 
-flash_size_mb:
+pio_board_strategy:
+  type: str
+  help: |
+    'derive' = scaffold a custom boards/<project>.json from module_part_number
+    (recommended for production hardware). 'stock' = use one of PlatformIO's
+    built-in board IDs (esp32-s3-devkitc-1 / esp32-c6-devkitc-1) — fine for
+    prototyping with an Espressif dev kit.
+  choices:
+    - derive
+    - stock
+  default: derive
+
+partition_scheme:
+  type: str
+  help: |
+    Flash partition layout. Sizes are scaled to flash_size_mb at scaffold time.
+    'default' = single factory app + data. 'ota' = two OTA app slots + data.
+    'huge_app' = one large factory app, minimal data. 'custom' = stub CSV that
+    you fill in.
+  choices:
+    - default
+    - ota
+    - huge_app
+    - custom
+  default: default
+
+cpu_freq_mhz:
   type: int
-  help: "Flash size in MB. N16R8 is 16MB."
-  choices: [4, 8, 16, 32]
-  default: 16
+  help: "CPU frequency. 240 MHz is the S3/C6 maximum; lower for power savings."
+  choices:
+    - 80
+    - 160
+    - 240
+  default: 240
+
+console_baud:
+  type: int
+  help: "Cosmetic for `pio device monitor` UI. USB-Serial/JTAG ignores baud."
+  default: 115200
 
 enable_hil:
   type: bool
@@ -81,11 +119,6 @@ enable_hil:
 enable_mcp:
   type: bool
   help: "Configure MCP servers (.mcp.json) for Claude Code?"
-  default: true
-
-use_gsd:
-  type: bool
-  help: "Reference GSD (Get Shit Done) conventions in CLAUDE.md?"
   default: true
 
 cpp_standard:

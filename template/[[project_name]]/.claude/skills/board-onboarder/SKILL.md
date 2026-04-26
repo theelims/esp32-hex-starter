@@ -17,6 +17,23 @@ first, then **merge** the validated data.
 - Path to the `.sch` file (default: `hardware/schematic.sch`)
 - The existing `hardware/board.yaml` (created at scaffold time)
 
+## board.yaml structure
+
+`hardware/board.yaml` has two halves:
+
+| Section | Owner | Notes |
+|---|---|---|
+| `module`, `memory`, `clock`, `power`, `usb`, `console`, `programming` | Copier (derived from `module_part_number` at scaffold time) | Treat as read-only here. The user only edits these if they swap modules. |
+| `buses`, `peripherals`, `gpios` | This skill (imported from the schematic) | Authoritative pinout consumed by `tools/gen_pins.py` to emit `Pins.hpp`. |
+
+The full schema is in `hardware/board.schema.yaml`. Validate any edits to
+the metadata sections against it; **do not** modify the metadata sections
+during the import flow below — they belong to the user.
+
+> Future expansion: a `--from-part-number` mode that re-derives metadata
+> sections when the user swaps the module is a backlog item, not part of
+> this skill yet.
+
 ## Phase 1 — Validate conventions
 
 Before touching `board.yaml`, read `docs/SCHEMATIC_CONVENTIONS.md` and use it as

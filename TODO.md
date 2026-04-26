@@ -34,6 +34,11 @@ on first real need, not speculatively:
 - [ ] **`components/adapters_esp32/src/LoggerEspLog.cpp`** — real `ILogger`
       implementation that forwards to `ESP_LOGx` with a tag. Referenced in
       `docs/testing-strategy.md` § ESP_LOG conventions.
+- [ ] **Wire ILogger into core.** `ILogger` interface is already designed
+      (`components/core/include/ports/ILogger.hpp`); `FakeLogger` exists for tests.
+      Implement `LoggerEspLog.cpp` to forward calls to `ESP_LOGx`. Inject it as a
+      dependency into core components. `enforce-core-purity.sh` already blocks
+      `#include <esp_log.h>` in core/ via the `esp_*.h` pattern.
 
 ## Coverage & fuzzing (opt-in)
 
@@ -54,10 +59,37 @@ Mentioned in `docs/testing-strategy.md` as "two cheap additions, off by default"
 - [x] **`enable_hil=false` scaffolded project still imports `hil` in
       root pyproject.** Verified: `pyproject.toml.jinja` guards both
       `[tool.uv.workspace].members` and `[tool.mypy].files` with `[% if enable_hil %]`.
+- [x] **Expand `board.yaml` with ESP32 variant metadata.** Done via
+      `module_part_number` master key — `extensions/esp32_helpers.py`
+      derives flash size, mode, voltage, PSRAM, clock, package; new
+      `module`, `memory`, `clock`, `power`, `usb`, `console`, `programming`
+      sections in `board.yaml.jinja`; schema in `hardware/board.schema.yaml`.
+- [x] **PlatformIO board specification workflow.** Done via
+      `pio_board_strategy` Copier question (`derive`/`stock`). `derive`
+      generates `boards/[[project_name]].json` from the part number;
+      `platformio.ini.jinja` branches on the strategy. `_exclude` drops
+      the `boards/` folder when `stock` is chosen.
+- [ ] **board-onboarder `--from-part-number` mode.** Re-derive metadata
+      sections of `board.yaml` when the user swaps the module part number
+      mid-project. Currently part-number parsing only happens at Copier
+      scaffold time.
+- [x] **End-user install path for `extensions.esp32_helpers`.** Canonical
+      helper now lives at `template/[[project_name]]/tools/esp32_helpers.py`
+      (lands in every scaffolded project for runtime reuse). The repo-root
+      `extensions/esp32_helpers.py` is a thin loader stub that imports it
+      via `importlib.util.spec_from_file_location` and exposes the Jinja
+      Extension class. Single source of truth; tests still set PYTHONPATH
+      to find the stub at scaffold time. README still needs a note about
+      `uvx --with` invocation for outside-the-tree scaffolding.
 - [ ] **`.claude/skills/esp32s3-reference/SKILL.md`** was removed from the tree
       per A1/B10 of the review. Consider adding a minimal chip-reference skill
-      (power tree, GPIO quirks, DMA channels) so the agent has S3-general
+      (power tree, GPIO quirks, DMA channels) so the agent has S3-general. Same applies to other chips like C3, C6, P4, ...
       knowledge on hand without a chip-specific onboard.
+- [ ] **`hardware/testsetup.yaml`** — mirrors `hardware/board.yaml` but catalogs
+      test equipment attached to the board (Siglent scope, PPK2, Sigrok logic
+      analyzer, etc.). Scaffold as optional, populated by the `testsetup-onboarder`
+      skill. Enables automated connection hints and measurement reminders in
+      debugging workflows.
 - [ ] **`ISpiBus` fake** — `FakeSpiBus.hpp` to parallel `FakeI2cBus.hpp`. Currently
       only the port exists.
 - [ ] **Golden-file hash** in `tests/test_scaffold.py` — the scaffolding
@@ -69,9 +101,10 @@ Mentioned in `docs/testing-strategy.md` as "two cheap additions, off by default"
 
 ## Documentation gaps
 
-- [ ] **Upgrade path from existing SETUP.md projects.** `CHANGELOG.md` says
-      "delete the old file and re-scaffold into a scratch dir, then merge" —
-      write a `docs/migrating-from-setup-md.md` that walks through it.
+- [ ] **Crosscheck docs/ references in template/.** Verify that `.claude/agents/`
+      and other scaffolded prose link to `docs/` articles (e.g., links to
+      `embedded-coding-rules.md`, `testing-strategy.md`). Audit for broken or
+      implicit references and ensure paths work post-scaffold.
 - [ ] **Per-chip skill template.** `.claude/agents/component-onboarder.md`
       describes the SKILL.md shape but there's no worked example. Ship one
       (e.g. BMP280) under `docs/examples/` so users see the format.

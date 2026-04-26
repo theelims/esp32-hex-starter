@@ -13,7 +13,7 @@ calendar-based (`YYYY.MM.DD`) — the template is not semver.
   `esp32-agent-template/`.
 - Questions: `project_name`, `project_description`, `author_name`, `author_email`,
   `board_variant`, `psram_mode`, `flash_size_mb`, `enable_hil`, `enable_mcp`,
-  `use_gsd`, `cpp_standard`.
+  `cpp_standard`.
 - Hexagonal-lite scaffold: `components/core/`, `components/adapters_esp32/`,
   `components/adapters_fake/`, `components/board/`, `components/drivers/`.
 - Pre-commit hooks: `core-purity`, `clang-format`, `stack-size-convention`,
