@@ -17,3 +17,10 @@ _Things future-me (or the agent) should know. Example:_
 
 ## Test points and debug access
 _What's broken out, what's not, how to probe during HIL testing._
+
+## Schematic conventions
+When adding or changing peripherals in the EAGLE schematic, follow the
+`BOARD_*` attribute and net-naming conventions documented in
+`docs/SCHEMATIC_CONVENTIONS.md`.  After updating the schematic, run
+`/board-onboarder` to import the changes into `hardware/board.yaml` and
+regenerate `Pins.hpp` with `uv run gen-pins`.

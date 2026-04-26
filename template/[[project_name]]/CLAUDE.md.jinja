@@ -65,9 +65,9 @@ ESP32-S3 C++ firmware using ESP-IDF (via PlatformIO), structured as Ports & Adap
 - **`docs/board.md`** — human-authored narrative. Design intent, gotchas, power tree.
 - **Per-chip skills** in `.claude/skills/<chip>-driver/` — loaded on demand; list reference libraries; contain known-good driver template.
 
-Onboarding a new chip: user drops datasheet at `hardware/datasheets/<chip>/datasheet.pdf` → invoke `component-onboarder` sub-agent → it produces `datasheet.md`, `register_map.md`, `<chip>_regs.hpp`, and the per-chip skill. Only *then* does `driver-author` write the driver.
+Onboarding a new chip: user drops datasheet at `hardware/datasheets/<chip>/datasheet.pdf` → run `/component-onboarder` → it produces `datasheet.md`, `register_map.md`, `<chip>_regs.hpp`, and the per-chip skill. Only *then* does `driver-author` write the driver.
 
-Schematic changes: user runs `uv run import-schematic` (dry run) → reviews conflicts → `--apply`. See `tools/codegen/SCHEMATIC_CONVENTIONS.md` for the required `BOARD_*` attributes and net-naming pattern.
+Schematic changes: user runs `/board-onboarder` (dry run) → reviews conflicts → `--apply`. See `docs/SCHEMATIC_CONVENTIONS.md` for the required `BOARD_*` attributes and net-naming pattern.
 
 [% if use_gsd %]
 ## GSD (Get Shit Done) integration

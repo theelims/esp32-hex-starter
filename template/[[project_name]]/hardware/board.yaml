@@ -1,5 +1,5 @@
 # Starter template. Fill in, then run `uv run gen-pins`.
-# Importer (uv run import-schematic) populates this from hardware/schematic.sch
+# Importer (/board-onboarder) populates this from hardware/schematic.sch
 # but will leave fields empty where it cannot determine a value.
 
 board:

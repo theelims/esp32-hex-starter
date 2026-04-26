@@ -19,6 +19,6 @@ Verify with `pio test -e native` and `pio run -e esp32s3` before declaring done.
 
 Before creating a new port, read `hardware/board.yaml` to confirm the peripheral exists on this board. If the YAML does not describe it, ask the user whether:
 1. The board description is incomplete (→ update board.yaml first), or
-2. The peripheral is legitimately a new addition (→ user updates schematic → runs `uv run import-schematic`).
+2. The peripheral is legitimately a new addition (→ user updates schematic → runs `/board-onboarder`).
 
 Never invent a port for hardware not on the board.

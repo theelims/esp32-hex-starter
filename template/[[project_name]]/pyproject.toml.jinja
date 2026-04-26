@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Python tooling for [[ project_name ]] (sim[% if enable_hil %] + HIL bench[% endif %])"
 authors = [{name = "[[ author_name ]]", email = "[[ author_email ]]"}]
 requires-python = ">=3.10"
-# Codegen scripts live at the repo root and need pyyaml at import time.
 dependencies = [
     "pyyaml>=6.0",
 ]
@@ -17,8 +16,14 @@ dev = [
 ]
 
 [project.scripts]
-gen-pins         = "tools.codegen.gen_pins:main"
-import-schematic = "tools.codegen.import_eagle:main"
+gen-pins = "tools.gen_pins:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tools"]
 
 [tool.uv.workspace]
 members = ["tools/sim"[% if enable_hil %], "tools/hil"[% endif %]]
@@ -32,4 +37,4 @@ hil     = { workspace = true }
 [tool.mypy]
 strict = true
 python_version = "3.10"
-files = ["tools/codegen", "tools/sim/simhost"[% if enable_hil %], "tools/hil/hil"[% endif %]]
+files = ["tools/gen_pins.py", "tools/sim/simhost"[% if enable_hil %], "tools/hil/hil"[% endif %]]

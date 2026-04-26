@@ -5,16 +5,15 @@ ordered from "needed before first real use" to "nice to have".
 
 ## Before first real use
 
-- [ ] **Pin the GitHub slug.** `README.md`, `CHANGELOG.md`, `docs/adr/0004-copier-migration.md`,
-      and `.github/workflows/scaffold-matrix.yml` all reference `theelims/esp32-hex-starter`.
+- [x] **Verify copier `_exclude` works** with the custom `[% %]` delimiters for
+      `tools/hil/**` and `.mcp.json` gating. `tests/test_scaffold.py` confirms both
+      `enable_hil=false` and `enable_mcp=false` correctly drop the excluded paths.
+- [x] **Run the test matrix locally.** Fast tier (`pytest`) passes; 2 slow tests skip because
+      PlatformIO is not installed. No regressions from the Copier-delimiter fixes.
+- [ ] **Pin the GitHub slug.** `README.md` still references `theelims/esp32-hex-starter`.
       Replace with the actual org/repo when the template is pushed.
-- [ ] **Publish to a git remote** and sanity-run `uvx copier copy gh:theelims/esp32-hex-starter /tmp/demo`
+- [ ] **Publish to a git remote** and sanity-run `uvx copier copy gh:<org>/<repo> /tmp/demo`
       with `project_name=demo_board`. Verify it produces a tree that compiles.
-- [ ] **Run the test matrix locally.** `cd tests && pytest` (fast tier) then
-      `pytest --runslow` (requires `pio`). Fix any issues surfaced before first user.
-- [ ] **Verify copier `_exclude` works** with the custom `[% %]` delimiters for
-      `tools/hil/**` and `.mcp.json` gating. If Copier evaluates `_exclude` with
-      default Jinja delimiters, swap back to `{% %}` for those patterns only.
 
 ## Content the prose referenced but never defined
 
@@ -49,14 +48,12 @@ Mentioned in `docs/testing-strategy.md` as "two cheap additions, off by default"
 
 ## Nice-to-have template improvements
 
-- [ ] **C6 board variant.** `board_variant = esp32-c6-devkitc-1` is a
-      questionnaire option but the generated `platformio.ini.jinja` only has an
-      S3 branch. Add a C6 env (debug_tool, board_build) and adjust the
-      CLAUDE.md's "ESP32-S3-WROOM-1" line to vary.
-- [ ] **`enable_hil=false` scaffolded project still imports `hil` in
-      root pyproject.** The conditional in `pyproject.toml.jinja` handles the
-      workspace member, but double-check `[tool.mypy].files` doesn't reference
-      a non-existent path.
+- [x] **C6 board variant.** `board_variant = esp32-c6-devkitc-1` is a questionnaire
+      option and `platformio.ini.jinja` already branches on it (board, psram_mode
+      conditional). Needs real C6 hardware to validate the generated `sdkconfig.defaults`.
+- [x] **`enable_hil=false` scaffolded project still imports `hil` in
+      root pyproject.** Verified: `pyproject.toml.jinja` guards both
+      `[tool.uv.workspace].members` and `[tool.mypy].files` with `[% if enable_hil %]`.
 - [ ] **`.claude/skills/esp32s3-reference/SKILL.md`** was removed from the tree
       per A1/B10 of the review. Consider adding a minimal chip-reference skill
       (power tree, GPIO quirks, DMA channels) so the agent has S3-general

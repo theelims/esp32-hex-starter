@@ -1,9 +1,12 @@
 ---
 name: component-onboarder
 description: Ingests a chip datasheet PDF and produces a datasheet.md extract, register_map.md, a regs.hpp header, and a per-chip skill. Invoke when a new chip is added to the board.
+trigger: /component-onboarder
 tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch
 model: opus
 ---
+
+# /component-onboarder
 
 You onboard a new chip into the project. Inputs the user gives you:
 

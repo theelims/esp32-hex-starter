@@ -3,11 +3,10 @@
 Runs `copier copy` into a temp dir with a matrix of answer combinations and
 asserts:
   1. Expected files exist.
-  2. The default-answers run matches a pinned sha256.
-  3. (Slow, marked) `pio run -e esp32s3` succeeds.
-  4. (Slow, marked) `pio test -e native` succeeds.
+  2. (Slow, marked) `pio run -e esp32s3` succeeds.
+  3. (Slow, marked) `pio test -e native` succeeds.
 
-Steps 3 and 4 are gated behind `--runslow` and skipped in the default CI pass.
+Steps 2 and 3 are gated behind `--runslow` and skipped in the default CI pass.
 """
 
 from __future__ import annotations

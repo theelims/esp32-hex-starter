@@ -1,6 +1,6 @@
 # Schematic conventions for the importer
 
-The importer (`uv run import-schematic`) reads a single EAGLE 9.x /
+The importer (invoked via `/board-onboarder`) reads a single EAGLE 9.x /
 Fusion 360 Electronics `.sch` file and writes into `hardware/board.yaml`.
 It cannot guess design intent — it reads explicit annotations.
 
@@ -57,7 +57,7 @@ The importer handles multi-sheet schematics automatically.
 
 ## Merge behaviour when you re-import
 
-Running `uv run import-schematic --apply` after a schematic revision:
+Running `/board-onboarder` after a schematic revision:
 
 1. Reads the current `board.yaml` (human edits).
 2. Reads the current `.sch` (design truth).
@@ -67,7 +67,7 @@ Running `uv run import-schematic --apply` after a schematic revision:
 5. Writes the merged result only with `--apply`.
 
 Without `--apply`, it's a dry run that just lists what would change
-and where the conflicts are. This is the "safe" verb the agent uses
+and where the conflicts are. This is the "safe" mode the skill uses
 by default.
 
 ## Fields the importer cannot fill

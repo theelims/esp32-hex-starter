@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: tests that require PlatformIO (hardware build or on-target tests)",
+]
