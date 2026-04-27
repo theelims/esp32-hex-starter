@@ -7,7 +7,7 @@ The generated project uses:
 - **ESP-IDF via PlatformIO** (C++, exceptions/RTTI off).
 - **Ports & Adapters** so ~80% of the firmware is host-testable with GoogleTest.
 - **uv** as the Python package manager for sim and HIL tooling.
-- **Claude Code integration**: `CLAUDE.md`, sub-agents, skills, hooks, MCP.
+- **Claude Code integration**: `CLAUDE.md`, sub-agents, skills, hooks.
 - Optional **HIL bench** (Siglent SDS1104X-E + Nordic PPK2 + sigrok logic analyser — multiselect).
 
 ## Motivation
@@ -23,8 +23,6 @@ This template rethinks embedded development for agentic workflows by amplifying 
 1. **Sub-second feedback** — the majority of logic is compiled and tested natively with GoogleTest, letting the agent iterate on structure and behaviour at machine speed.
 2. **Hardware truth** — pin maps, register maps, and schematic intent live in version-controlled files the agent reads, not guesses. The human provides the ground truth; the agent consumes it.
 3. **Enforced constraints** — pre-commit hooks and coding rules stop agents from violating memory, stack, and ISR contracts before the code ever reaches a board. The human defines the limits; the agent operates inside them.
-4. **Tool-driven iteration** — MCP servers let the agent build, flash, and probe the target without re-reading the entire documentation tree. The human validates the physical result; the agent reacts to it.
-
 ## Architecture & Philosophy
 
 ### Hexagonal-lite
@@ -77,10 +75,6 @@ See [`docs/hardware-knowledge.md`](docs/hardware-knowledge.md) for the full pipe
 
 The [`docs/embedded-coding-rules.md`](docs/embedded-coding-rules.md) document is the contract between you and the agent. It covers memory (no heap after init, explicit stack budgets, DMA alignment), types (strong typedefs for units, `enum class`), naming, comments, concurrency, and logging. Rules marked **(H)** are enforced by pre-commit hooks; the rest are policed by the `code-reviewer` sub-agent.
 
-### MCP Servers
-
-The project optionally includes two MCP servers that give the agent direct tool access: `esp-idf-mcp` (build/flash/monitor, structured error diagnostics) and `serial-mcp-server` (serial REPL, boot log capture). Both are pinned to vetted sources and configured in committed `.mcp.json`. See [`docs/mcp.md`](docs/mcp.md) for installation and security posture.
-
 ## Scaffold a new project
 
 ```bash
@@ -92,7 +86,7 @@ uv run pre-commit install --hook-type pre-push
 pio run -e esp32s3
 ```
 
-Copier will ask a short series of questions (project name, board variant, which HIL bench instruments to include, whether to enable MCP). Defaults target the ESP32-S3 DevKitC-N16R8 with scope + PPK2.
+Copier will ask a short series of questions (project name, board variant, which HIL bench instruments to include). Defaults target the ESP32-S3 DevKitC-N16R8 with scope + PPK2.
 
 ## Update an existing project
 

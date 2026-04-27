@@ -12,7 +12,7 @@ calendar-based (`YYYY.MM.DD`) — the template is not semver.
 - Initial Copier template migrated from the 2500-line `SETUP.md` in
   `esp32-agent-template/`.
 - Questions: `project_name`, `project_description`, `author_name`, `author_email`,
-  `board_variant`, `psram_mode`, `flash_size_mb`, `hil_instruments`, `enable_mcp`,
+  `board_variant`, `psram_mode`, `flash_size_mb`, `hil_instruments`,
   `cpp_standard`.
 - Hexagonal-lite scaffold: `components/core/`, `components/adapters_esp32/`,
   `components/adapters_fake/`, `components/board/`, `components/drivers/`.

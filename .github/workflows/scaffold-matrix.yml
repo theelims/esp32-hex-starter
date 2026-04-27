@@ -15,7 +15,6 @@ jobs:
         hil_instruments:
           - "[]"
           - "[scope,ppk2,sigrok]"
-        enable_mcp: [true, false]
         module_part_number:
           - ESP32-S3-WROOM-1-N16R8   # S3, octal PSRAM, 16 MB
           - ESP32-S3-WROOM-1-N4      # S3, no PSRAM, 4 MB
@@ -32,7 +31,6 @@ jobs:
           PYTHONPATH=. uv tool run copier copy --trust --defaults --force . /tmp/scratch \
             --data project_name=ci_demo \
             --data "hil_instruments=${{ matrix.hil_instruments }}" \
-            --data enable_mcp=${{ matrix.enable_mcp }} \
             --data module_part_number=${{ matrix.module_part_number }}
       - name: Assert structure
         run: |

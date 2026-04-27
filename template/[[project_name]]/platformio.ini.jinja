@@ -45,6 +45,7 @@ framework = espidf
 ; Cosmetic under USB-Serial/JTAG — the host side ignores baud.
 ; Kept only so PIO's monitor UI has a value to display.
 monitor_speed = [[ console_baud ]]
+monitor_filters = log2file
 ; USB-JTAG/Serial (built-in on S3/C6) — no external probe needed.
 ; debug_tool=esp-builtin means `pio debug` starts OpenOCD automatically;
 ; see .vscode/launch.json and docs/debugging.md for the intended entry point.

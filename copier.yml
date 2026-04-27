@@ -20,7 +20,6 @@ _exclude:
   - "[% if 'scope' not in hil_instruments %]*/tools/hil/tests/scope[% endif %]"
   - "[% if 'ppk2' not in hil_instruments %]*/tools/hil/tests/ppk2[% endif %]"
   - "[% if 'sigrok' not in hil_instruments %]*/tools/hil/tests/sigrok[% endif %]"
-  - "[% if not enable_mcp %].mcp.json[% endif %]"
   - "[% if pio_board_strategy != 'derive' %]*/boards[% endif %]"
 
 _message_after_copy: |
@@ -132,11 +131,6 @@ hil_instruments:
     - ppk2
     - sigrok
   default: [scope, ppk2]
-
-enable_mcp:
-  type: bool
-  help: "Configure esp-idf and serial MCP servers (.mcp.json) for Claude Code?"
-  default: true
 
 cpp_standard:
   type: str

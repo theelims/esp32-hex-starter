@@ -7,7 +7,7 @@ pytest). This document is the glue that says *when to use which*.
 
 ```
                   ┌───────────────────────────────────────┐
-                  │ 4 · HIL bench (scope / PPK2 / sigrok)  │  uv run pytest -m hil
+                  │ 4 · HIL bench (scope / PPK2 / sigrok) │  uv run pytest -m hil
                   ├───────────────────────────────────────┤
                   │ 3 · On-target Unity (flash + run)     │  pio test -e test_esp32s3
                   ├───────────────────────────────────────┤

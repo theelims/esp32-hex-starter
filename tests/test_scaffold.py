@@ -190,10 +190,11 @@ def test_hil_sigrok_only_excludes_scope_and_ppk2(scratch: Path) -> None:
     assert not (hil / "tests" / "ppk2").exists()
 
 
-def test_mcp_off_drops_mcp_config(scratch: Path) -> None:
-    _copier_copy(scratch, {"project_name": "no_mcp", "enable_mcp": "false"})
-    project = scratch / "no_mcp"
-    assert not (project / ".mcp.json").exists()
+def test_log2file_filter(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "default_demo"})
+    project = scratch / "default_demo"
+    pio_ini = (project / "platformio.ini").read_text()
+    assert "monitor_filters = log2file" in pio_ini
 
 
 @pytest.mark.slow

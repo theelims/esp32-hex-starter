@@ -55,6 +55,3 @@ from hard-won experience, test-point access, why a particular pin was chosen.
 
 Template: see the scaffolded `docs/board.md`.
 
-## MCP servers
-
-See `mcp.md` for what `esp-idf-mcp` and `serial-mcp-server` expose and how to install them.
