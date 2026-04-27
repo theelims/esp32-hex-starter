@@ -20,7 +20,6 @@ _exclude:
   - "[% if 'scope' not in hil_instruments %]*/tools/hil/tests/scope[% endif %]"
   - "[% if 'ppk2' not in hil_instruments %]*/tools/hil/tests/ppk2[% endif %]"
   - "[% if 'sigrok' not in hil_instruments %]*/tools/hil/tests/sigrok[% endif %]"
-  - "[% if pio_board_strategy != 'derive' %]*/boards[% endif %]"
 
 _message_after_copy: |
   Project scaffolded into ./[[ project_name ]]
@@ -57,14 +56,6 @@ author_email:
   help: "Author email."
   default: "firmware@example.invalid"
 
-board_variant:
-  type: str
-  help: "Chip family. Drives a few sdkconfig and platformio.ini branches that PIO/IDF identify by family name."
-  choices:
-    - esp32-s3-devkitc-1
-    - esp32-c6-devkitc-1
-  default: esp32-s3-devkitc-1
-
 module_part_number:
   type: str
   help: |
@@ -76,18 +67,6 @@ module_part_number:
     [% if not (module_part_number | regex_search('^ESP32(-(C|S|H|P)\d+)?-(WROOM|WROVER|MINI|SOLO)-\d+U?(-[NH]\d+(R\d+V?)?)?$')) %]
     Must look like 'ESP32-S3-WROOM-1-N16R8'. See Espressif part-number guide.
     [% endif %]
-
-pio_board_strategy:
-  type: str
-  help: |
-    'derive' = scaffold a custom boards/<project>.json from module_part_number
-    (recommended for production hardware). 'stock' = use one of PlatformIO's
-    built-in board IDs (esp32-s3-devkitc-1 / esp32-c6-devkitc-1) — fine for
-    prototyping with an Espressif dev kit.
-  choices:
-    - derive
-    - stock
-  default: derive
 
 partition_scheme:
   type: str

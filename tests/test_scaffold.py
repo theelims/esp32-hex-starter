@@ -97,21 +97,12 @@ def test_derive_strategy_emits_custom_pio_board(scratch: Path) -> None:
     assert "board_dir = ./boards" in pio_ini
 
 
-def test_stock_strategy_drops_boards_dir(scratch: Path) -> None:
-    _copier_copy(scratch, {"project_name": "stock_demo", "pio_board_strategy": "stock"})
-    project = scratch / "stock_demo"
-    assert not (project / "boards").exists()
-    pio_ini = (project / "platformio.ini").read_text()
-    assert "board = esp32-s3-devkitc-1" in pio_ini
-
-
 def test_c6_variant_drops_bluetooth(scratch: Path) -> None:
     _copier_copy(
         scratch,
         {
             "project_name": "c6_demo",
             "module_part_number": "ESP32-C6-MINI-1-N4",
-            "board_variant": "esp32-c6-devkitc-1",
         },
     )
     project = scratch / "c6_demo"
