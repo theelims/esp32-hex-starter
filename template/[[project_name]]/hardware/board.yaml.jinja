@@ -1,8 +1,8 @@
-[%- set p = module_part_number | parse_part_number -%]
 # Hardware definition for [[ project_name ]].
 #
-# `module.part_number` is the master key — fields under `module`, `memory`,
-# `power` were derived from it at scaffold time. Override only with reason.
+# Module, memory, clock, power, console, and programming fields below were
+# derived from the default module at scaffold time.  Change them here (or run
+# ``/welcome``) if you swap to a different Espressif module.
 #
 # `buses`, `peripherals`, and `gpios` are populated by the /board-onboarder
 # skill from your schematic, then consumed by `uv run gen-pins` to emit
@@ -15,31 +15,31 @@ board:
   description: "[[ project_description ]]"
 
 module:
-  part_number: "[[ module_part_number ]]"
-  chip: "[[ p.chip_pretty ]]"
-  package: "[[ p.package ]]"
-  external_antenna: [[ p.external_antenna | string | lower ]]
-  temp_grade: "[[ p.temp_grade ]]"
+  part_number: "ESP32-S3-WROOM-1-N16R8"
+  chip: "ESP32-S3"
+  package: "WROOM-1"
+  external_antenna: false
+  temp_grade: "normal"
 
 memory:
   flash:
-    size_mb: [[ p.flash_size_mb ]]
-    mode: "[[ p.flash_mode ]]"
-    freq_mhz: [[ p.flash_freq_mhz ]]
-    voltage_v: [[ p.vdd_spi_v ]]
+    size_mb: 16
+    mode: "qio"
+    freq_mhz: 80
+    voltage_v: 3.3
   psram:
-    present: [[ p.psram_present | string | lower ]]
-    size_mb: [[ p.psram_size_mb ]]
-    mode: "[[ p.psram_mode ]]"
+    present: true
+    size_mb: 8
+    mode: "octal"
     speed_mhz: 80
 
 clock:
-  cpu_freq_mhz: [[ cpu_freq_mhz ]]
+  cpu_freq_mhz: 240
   xtal_freq_mhz: 40
 
 power:
   vcc_main_v: 3.3
-  vdd_spi_v: [[ p.vdd_spi_v ]]
+  vdd_spi_v: 3.3
   battery_powered: false
 
 usb:
@@ -55,13 +55,13 @@ usb:
 
 console:
   uart: 0
-  baud: [[ console_baud ]]
+  baud: 115200
 
 programming:
   upload_speed: 460800
   upload_protocol: esp-builtin
   debug_protocol: esp-builtin
-  partition_scheme: [[ partition_scheme ]]
+  partition_scheme: default
 
 # ---------- Populated by /board-onboarder from the schematic ----------
 

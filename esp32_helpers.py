@@ -1,8 +1,8 @@
 """ESP32 part-number parsing and partition-layout helpers.
 
-Available at runtime for re-deriving module fields (e.g. after changing
-``hardware/board.yaml``).  Run via ``uv run python tools/esp32_helpers.py`` or
-import in project scripts.
+This module is the canonical source of truth for ``parse_part_number`` and
+``partition_layout``. Tests import from here; the scaffolded project gets a
+copy at ``tools/esp32_helpers.py`` for runtime use.
 """
 
 from __future__ import annotations

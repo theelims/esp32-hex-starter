@@ -71,6 +71,7 @@ def test_default_board_yaml_has_expanded_sections(scratch: Path) -> None:
     assert board["memory"]["flash"]["mode"] == "qio"
     assert board["memory"]["psram"]["present"] is True
     assert board["memory"]["psram"]["mode"] == "octal"
+    assert board["console"]["baud"] == 115200
     assert board["clock"]["cpu_freq_mhz"] == 240
     assert board["usb"]["console"] == "usb_serial_jtag"
     assert board["usb"]["otg_role"] == "none"
@@ -92,26 +93,10 @@ def test_derive_strategy_emits_custom_pio_board(scratch: Path) -> None:
     assert manifest["upload"]["flash_size"] == "16MB"
     assert manifest["upload"]["maximum_size"] == 16 * 1024 * 1024
     assert "bluetooth" in manifest["connectivity"]
-    pio_ini = (project / "platformio.ini").read_text()
-    assert "board = demo_board" in pio_ini
-    assert "board_dir = ./boards" in pio_ini
-
-
-def test_c6_variant_drops_bluetooth(scratch: Path) -> None:
-    _copier_copy(
-        scratch,
-        {
-            "project_name": "c6_demo",
-            "module_part_number": "ESP32-C6-MINI-1-N4",
-        },
-    )
-    project = scratch / "c6_demo"
-    board = yaml.safe_load((project / "hardware" / "board.yaml").read_text())
-    assert board["memory"]["flash"]["size_mb"] == 4
-    assert board["memory"]["psram"]["present"] is False
-    manifest = json.loads((project / "boards" / "c6_demo.json").read_text())
-    assert manifest["build"]["mcu"] == "esp32c6"
-    assert "bluetooth" not in manifest["connectivity"]
+    assert "extra_flags" in manifest["build"]
+    assert "-DBOARD_HAS_PSRAM" in manifest["build"]["extra_flags"]
+    assert "board = demo_board" in (project / "platformio.ini").read_text()
+    assert "board_dir = ./boards" in (project / "platformio.ini").read_text()
 
 
 def _parse_partitions_csv(text: str) -> list[dict[str, str]]:
@@ -133,32 +118,34 @@ def _parse_partitions_csv(text: str) -> list[dict[str, str]]:
     return rows
 
 
-def test_partition_csv_ota_for_16mb(scratch: Path) -> None:
-    _copier_copy(scratch, {"project_name": "ota_demo", "partition_scheme": "ota"})
-    project = scratch / "ota_demo"
+def test_default_partitions_csv_is_populated(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "demo_board"})
+    project = scratch / "demo_board"
     csv = (project / "partitions.csv").read_text()
     rows = _parse_partitions_csv(csv)
     names = {r["name"] for r in rows}
-    assert {"ota_0", "ota_1"} <= names
-    last_end = 0
-    for r in rows:
-        offset = int(r["offset"], 16)
-        size = int(r["size"], 16)
-        assert offset % 0x1000 == 0
-        if r["type"] == "app":
-            assert offset % 0x10000 == 0
-        assert offset >= last_end
-        last_end = offset + size
-    assert last_end <= 16 * 1024 * 1024
+    assert {"nvs", "otadata", "phy_init", "factory", "storage"} <= names
+    assert len(rows) == 5
+    # No TODO marker in the default CSV
+    assert "TODO(custom)" not in csv
 
 
-def test_partition_csv_custom_emits_stub(scratch: Path) -> None:
-    _copier_copy(scratch, {"project_name": "custom_demo", "partition_scheme": "custom"})
-    project = scratch / "custom_demo"
-    csv = (project / "partitions.csv").read_text()
-    assert "TODO(custom)" in csv
-    # No partition rows in a stub CSV — only comments.
-    assert _parse_partitions_csv(csv) == []
+def test_default_sdkconfig_has_correct_flash(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "demo_board"})
+    project = scratch / "demo_board"
+    sdk_cfg = (project / "sdkconfig.defaults").read_text()
+    assert "CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y" in sdk_cfg
+    assert "CONFIG_SPIRAM_MODE_OCT=y" in sdk_cfg
+    assert "CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y" in sdk_cfg
+
+
+def test_claude_md_has_correct_mcu_info(scratch: Path) -> None:
+    _copier_copy(scratch, {"project_name": "demo_board"})
+    project = scratch / "demo_board"
+    claude_md = (project / "CLAUDE.md").read_text()
+    assert "ESP32-S3-WROOM-1-N16R8" in claude_md
+    assert "16 MB flash" in claude_md
+    assert "octal PSRAM" in claude_md
 
 
 def test_hil_empty_drops_hil_tree(scratch: Path) -> None:

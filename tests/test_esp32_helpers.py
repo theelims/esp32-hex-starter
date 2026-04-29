@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from extensions.esp32_helpers import parse_part_number, partition_layout
+from esp32_helpers import parse_part_number, partition_layout
 
 
 class TestParsePartNumber:

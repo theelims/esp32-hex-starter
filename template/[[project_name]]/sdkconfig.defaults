@@ -1,5 +1,5 @@
-[%- set p = module_part_number | parse_part_number -%]
 # Project-wide sdkconfig overrides. PlatformIO picks these up at build time.
+# Derived from ESP32-S3-WROOM-1-N16R8 (default module).
 
 # C++ exceptions off, RTTI off (standard embedded policy — override if needed).
 # Implication: std::variant/std::get throwing is undefined; Result<T,E> callers
@@ -7,28 +7,20 @@
 CONFIG_COMPILER_CXX_EXCEPTIONS=n
 CONFIG_COMPILER_CXX_RTTI=n
 
-# Flash size (derived from module_part_number=[[ module_part_number ]])
-CONFIG_ESPTOOLPY_FLASHSIZE_[[ p.flash_size_mb ]]MB=y
+# Flash size (derived from module_part_number=ESP32-S3-WROOM-1-N16R8)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
 
-[% if p.psram_present %]
-# PSRAM: [[ p.psram_mode ]], 80MHz ([[ p.psram_size_mb ]]MB)
+# PSRAM: octal, 80MHz (8MB)
 CONFIG_SPIRAM=y
-[% if p.psram_mode == 'octal' %]
 CONFIG_SPIRAM_MODE_OCT=y
-[% else %]
-CONFIG_SPIRAM_MODE_QUAD=y
-[% endif %]
 CONFIG_SPIRAM_SPEED_80M=y
-[% else %]
-# No PSRAM on this module variant.
-[% endif %]
 
 # CPU frequency
-CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_[[ cpu_freq_mhz ]]=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 
 # Partition table — always custom. Built-in tables (SINGLE_APP, TWO_OTA)
 # assume 4 MB flash and waste anything beyond that. The custom CSV is
-# scaffolded from partition_scheme=[[ partition_scheme ]].
+# scaffolded from partition_scheme=default.
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 

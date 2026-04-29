@@ -10,8 +10,6 @@ _envops:
   comment_end_string: "#]"
 _answers_file: .copier-answers.yml
 _templates_suffix: .jinja
-_jinja_extensions:
-  - extensions.esp32_helpers:Esp32HelpersExtension
 _exclude:
   - "[% if not hil_instruments %]*/tools/hil[% endif %]"
   - "[% if 'scope' not in hil_instruments %]*/tools/hil/hil/scope.py[% endif %]"
@@ -25,6 +23,10 @@ _message_after_copy: |
   Project scaffolded into ./[[ project_name ]]
 
   Next:
+    cd [[ project_name ]]
+    Run /welcome (Claude Code) to configure your module and complete setup.
+
+    Or manually:
     cd [[ project_name ]]
     uv sync
     uv run pre-commit install
@@ -55,46 +57,6 @@ author_email:
   type: str
   help: "Author email."
   default: "firmware@example.invalid"
-
-module_part_number:
-  type: str
-  help: |
-    Espressif module part number (master key — flash size, PSRAM mode,
-    voltage, antenna are all derived from this). Examples:
-    ESP32-S3-WROOM-1-N16R8, ESP32-S3-WROOM-1-N8R2, ESP32-C6-MINI-1-N4.
-  default: "ESP32-S3-WROOM-1-N16R8"
-  validator: >-
-    [% if not (module_part_number | regex_search('^ESP32(-(C|S|H|P)\d+)?-(WROOM|WROVER|MINI|SOLO)-\d+U?(-[NH]\d+(R\d+V?)?)?$')) %]
-    Must look like 'ESP32-S3-WROOM-1-N16R8'. See Espressif part-number guide.
-    [% endif %]
-
-partition_scheme:
-  type: str
-  help: |
-    Flash partition layout. Sizes are scaled to flash_size_mb at scaffold time.
-    'default' = single factory app + data. 'ota' = two OTA app slots + data.
-    'huge_app' = one large factory app, minimal data. 'custom' = stub CSV that
-    you fill in.
-  choices:
-    - default
-    - ota
-    - huge_app
-    - custom
-  default: default
-
-cpu_freq_mhz:
-  type: int
-  help: "CPU frequency. 240 MHz is the S3/C6 maximum; lower for power savings."
-  choices:
-    - 80
-    - 160
-    - 240
-  default: 240
-
-console_baud:
-  type: int
-  help: "Cosmetic for `pio device monitor` UI. USB-Serial/JTAG ignores baud."
-  default: 115200
 
 hil_instruments:
   type: yaml

@@ -15,10 +15,6 @@ jobs:
         hil_instruments:
           - "[]"
           - "[scope,ppk2,sigrok]"
-        module_part_number:
-          - ESP32-S3-WROOM-1-N16R8   # S3, octal PSRAM, 16 MB
-          - ESP32-S3-WROOM-1-N4      # S3, no PSRAM, 4 MB
-          - ESP32-C6-MINI-1-N4       # C6, no PSRAM, 4 MB
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -30,8 +26,7 @@ jobs:
           mkdir -p /tmp/scratch
           PYTHONPATH=. uv tool run copier copy --trust --defaults --force . /tmp/scratch \
             --data project_name=ci_demo \
-            --data "hil_instruments=${{ matrix.hil_instruments }}" \
-            --data module_part_number=${{ matrix.module_part_number }}
+            --data "hil_instruments=${{ matrix.hil_instruments }}"
       - name: Assert structure
         run: |
           test -f /tmp/scratch/ci_demo/platformio.ini

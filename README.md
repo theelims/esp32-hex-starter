@@ -78,7 +78,7 @@ The [`docs/embedded-coding-rules.md`](docs/embedded-coding-rules.md) document is
 ## Scaffold a new project
 
 ```bash
-uvx copier copy gh:theelims/esp32-hex-starter my-project
+uvx copier copy --trust gh:theelims/esp32-hex-starter my-project
 cd my-project
 uv sync
 uv run pre-commit install
@@ -93,7 +93,7 @@ Copier will ask a short series of questions (project name, board variant, which 
 From inside a previously-scaffolded project, pull in upstream template fixes:
 
 ```bash
-copier update
+copier update --trust
 ```
 
 Copier walks conflicting hunks interactively — the same diff3-style flow as a rebase.
